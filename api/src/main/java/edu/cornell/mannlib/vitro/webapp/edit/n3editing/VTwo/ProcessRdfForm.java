@@ -168,7 +168,7 @@ public class ProcessRdfForm {
         List<String> N3RequiredAssert = editConfig.getN3Required();
         List<String> N3OptionalAssert = editConfig.getN3Optional();
         List<String> N3RequiredRetract = editConfig.getN3Required();
-        List<String> N3OptionalRetract = editConfig.getN3Optional();
+        List<String> N3OptionalRetract = editConfig.getN3OptionalRetracts();
 
         subInValuesToN3(editConfig, submission,
                 N3RequiredAssert, N3OptionalAssert,
@@ -193,9 +193,13 @@ public class ProcessRdfForm {
         substituteInForcedNewURIs(urisForNewResources, submission.getUrisFromForm(), requiredAsserts, optionalAsserts, URLToReturnTo);
         logSubstitue( "Added form URIs that required new URIs", requiredAsserts, optionalAsserts, requiredRetracts, optionalRetracts);
 
-
+        //At this point deprecated optional retracts n3 are the same as optional asserts n3
+        List<String> deprecatedRetracts = new ArrayList<String>();
+        if (optionalAsserts != null && optionalRetracts != null) {
+          deprecatedRetracts.addAll(optionalAsserts);
+        }
         /* ********** Form submission URIs ********* */
-        substituteInMultiURIs(submission.getUrisFromForm(), requiredAsserts, optionalAsserts, URLToReturnTo);
+        substituteInMultiURIs(submission.getUrisFromForm(), requiredAsserts, optionalAsserts, optionalRetracts, URLToReturnTo);
         logSubstitue( "Added form URIs", requiredAsserts, optionalAsserts, requiredRetracts, optionalRetracts);
         //Retractions does NOT get values from form.
 
@@ -234,11 +238,12 @@ public class ProcessRdfForm {
 			literalsFromForm.replace(aKey, newLiteralFromForm);
 		}
 
-        substituteInMultiLiterals( literalsFromForm, requiredAsserts, optionalAsserts, URLToReturnTo);
+        substituteInMultiLiterals( literalsFromForm, requiredAsserts, optionalAsserts, optionalRetracts, URLToReturnTo);
         logSubstitue( "Added form Literals", requiredAsserts, optionalAsserts, requiredRetracts, optionalRetracts);
         //Retractions does NOT get values from form.
-
-
+        if (optionalAsserts != null && optionalRetracts != null) {
+        	optionalRetracts.addAll(deprecatedRetracts);
+        }
 
         /* *********** Add subject, object and predicate ******** */
         substituteInSubPredObjURIs(editConfig, requiredAsserts, optionalAsserts, requiredRetracts, optionalRetracts, URLToReturnTo);
