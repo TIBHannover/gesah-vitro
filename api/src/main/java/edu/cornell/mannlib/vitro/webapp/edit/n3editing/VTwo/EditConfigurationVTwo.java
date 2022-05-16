@@ -54,6 +54,8 @@ public class EditConfigurationVTwo {
     List<String> n3Required = new ArrayList<String>();
     //String representing optional N3 for RDF
     List<String> n3Optional = new ArrayList<String>();
+    //String representing optional N3 for RDF retracts
+    List<String> n3OptionalRetracts = new ArrayList<String>();
     //Names of variables of 'objects' i.e. URIs on form
     List<String> urisOnform = new ArrayList<String>();
     //Names of variables corresponding to data values i.e. literals on form
@@ -491,6 +493,25 @@ public class EditConfigurationVTwo {
         this.n3Optional.addAll(Arrays.asList( n3Strs ));
     }
 
+		public List<String> getN3OptionalRetracts() {
+			return EditConfigurationUtils.copy(n3OptionalRetracts);
+		}
+
+		public void setN3OptionalRetracts(List<String> n3OptionalRetracts) {
+			this.n3OptionalRetracts = n3OptionalRetracts;
+		}
+
+		public void setN3OptionalRetracts(String... n3Strs) {
+			this.n3OptionalRetracts = new ArrayList<String>(Arrays.asList(n3Strs));
+		}
+
+		public void addN3OptionalRetracts(List<String> n3OptionalRetracts) {
+			this.n3OptionalRetracts.addAll(n3OptionalRetracts);
+		}
+
+		public void addN3OptionalRetracts(String... n3Strs) {
+			this.n3OptionalRetracts.addAll(Arrays.asList(n3Strs));
+		}
 
     public Map<String,String> getNewResources() {
         return newResources;
