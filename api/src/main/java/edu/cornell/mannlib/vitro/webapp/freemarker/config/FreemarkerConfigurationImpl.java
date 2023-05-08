@@ -22,6 +22,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import edu.cornell.mannlib.vitro.webapp.beans.ApplicationBean;
+import edu.cornell.mannlib.vitro.webapp.config.ConfigurationProperties;
 import edu.cornell.mannlib.vitro.webapp.controller.VitroRequest;
 import edu.cornell.mannlib.vitro.webapp.controller.freemarker.UrlBuilder;
 import edu.cornell.mannlib.vitro.webapp.controller.freemarker.UrlBuilder.Route;
@@ -314,7 +315,9 @@ public class FreemarkerConfigurationImpl extends Configuration {
 			urls.put("theme", UrlBuilder.getUrl(themeDir));
 			urls.put("index", UrlBuilder.getUrl("/browse"));
 			urls.put("developerAjax", UrlBuilder.getUrl("/admin/developerAjax"));
-
+			
+			urls.put("iiif", ConfigurationProperties.getBean(ctx).getProperty("iiif.url.base",""));
+			
 			return urls;
 		}
 
