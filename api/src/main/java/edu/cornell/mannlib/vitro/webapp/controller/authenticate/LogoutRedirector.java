@@ -31,8 +31,7 @@ public class LogoutRedirector {
 		log.debug("referringUri: '" + referringUri + "', restrictedUris="
 				+ getRestrictedPageUris(request));
 
-		if ((referringUri == null)
-				|| (getRestrictedPageUris(request).contains(referringUri))) {
+		if (getRestrictedPageUris(request).contains(referringUri)) {
 			log.debug("Sending to home page.");
 			return request.getContextPath();
 		} else {
