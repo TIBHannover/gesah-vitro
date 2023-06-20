@@ -509,7 +509,7 @@ public class AuthenticateTest extends AbstractTestClass {
 
 		assertNoProcessBean();
 		assertNewLoginSessions(OLD_STRANGER_NAME);
-		assertRedirect(URL_HOME);
+		assertRedirect(URL_WITH_LINK);
 	}
 
 	@Test
@@ -556,7 +556,7 @@ public class AuthenticateTest extends AbstractTestClass {
 
 	/** Create a LoginProcessBean in the session, and keep a reference to it. */
 	private void setProcessBean(State state, String username,
-			String loginProcessUrl, String afterLoginUrl) {
+								String loginProcessUrl, String afterLoginUrl) {
 		LoginProcessBean bean = LoginProcessBean.getBean(request);
 		bean.setState(state);
 		bean.setUsername(username);
@@ -576,7 +576,7 @@ public class AuthenticateTest extends AbstractTestClass {
 	}
 
 	private void setNewPasswordAttempt(String newPassword,
-			String confirmPassword) {
+									   String confirmPassword) {
 		request.addParameter("newPassword", newPassword);
 		request.addParameter("confirmPassword", confirmPassword);
 	}
@@ -593,8 +593,8 @@ public class AuthenticateTest extends AbstractTestClass {
 	}
 
 	private void assertProcessBean(State state, String username,
-			String infoMessage, String errorMessage, String loginProcessUrl,
-			String afterLoginUrl) {
+								   String infoMessage, String errorMessage, String loginProcessUrl,
+								   String afterLoginUrl) {
 		if (!LoginProcessBean.isBean(request)) {
 			fail("login process bean is null");
 		}
@@ -678,7 +678,7 @@ public class AuthenticateTest extends AbstractTestClass {
 		final int loginCount;
 
 		public UserInfo(String username, String uri, String password,
-				String roleUri, int loginCount) {
+						String roleUri, int loginCount) {
 			this.username = username;
 			this.uri = uri;
 			this.password = password;

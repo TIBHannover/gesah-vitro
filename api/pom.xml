@@ -107,5 +107,10 @@
             <version>1.3</version>
             <scope>test</scope>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>eu.tib.osl</groupId>-->
+<!--            <artifactId>vitro-api</artifactId>-->
+<!--            <version>1.11.0-SNAPSHOT</version>-->
+<!--        </dependency>-->
     </dependencies>
 </project>

@@ -71,9 +71,6 @@ public class DataPropertyDaoJenaTest extends AbstractTestClass {
 		property1.setPropertyValue(subModel.createProperty(VitroVocabulary.PUBLIC_DESCRIPTION_ANNOT), ResourceFactory.createLangLiteral("this is the public description", lang));
 		property1.setPropertyValue(subModel.createProperty(VitroVocabulary.DISPLAY_RANK_ANNOT), subModel.createTypedLiteral(21));
 		property1.setPropertyValue(subModel.createProperty(VitroVocabulary.DISPLAY_LIMIT), subModel.createTypedLiteral(5));
-		property1.setPropertyValue(subModel.createProperty(VitroVocabulary.HIDDEN_FROM_DISPLAY_BELOW_ROLE_LEVEL_ANNOT), subModel.createResource("http://vitro.mannlib.cornell.edu/ns/vitro/role#curator"));
-		property1.setPropertyValue(subModel.createProperty(VitroVocabulary.PROHIBITED_FROM_UPDATE_BELOW_ROLE_LEVEL_ANNOT), subModel.createResource("http://vitro.mannlib.cornell.edu/ns/vitro/role#selfEditor"));
-		property1.setPropertyValue(subModel.createProperty(VitroVocabulary.HIDDEN_FROM_PUBLISH_BELOW_ROLE_LEVEL_ANNOT), subModel.createResource("http://vitro.mannlib.cornell.edu/ns/vitro/role#editor"));
 		property1.setPropertyValue(subModel.createProperty(VitroVocabulary.PROPERTY_INPROPERTYGROUPANNOT), subModel.createResource("http://thisIsTheInPropertyGroupURI"));
 		property1.setPropertyValue(subModel.createProperty(VitroVocabulary.PROPERTY_CUSTOMENTRYFORMANNOT), subModel.createResource("http://thisIsTheCustomFormEntryURI"));
 
@@ -97,22 +94,22 @@ public class DataPropertyDaoJenaTest extends AbstractTestClass {
 		WebappDaoFactoryJena wdfj = new WebappDaoFactoryJena(superModel);
 		DataPropertyDaoJena dpdj = (DataPropertyDaoJena) wdfj.getDataPropertyDao();
 		DataProperty dataProperty = dpdj.getDataPropertyByURI(propertyURI); // the DataProperty will be populated
-		                                                                    // with the information already in
-		                                                                    // the jena model.
+		// with the information already in
+		// the jena model.
 
 
 		Assert.assertEquals(dataProperty.getPublicName(), property1.getLabel(lang));
 
-        dpdj.updateDataProperty(dataProperty);       // we haven't changed any values here, so
-                                                     // the models should be unchanged.
+		dpdj.updateDataProperty(dataProperty);       // we haven't changed any values here, so
+		// the models should be unchanged.
 
-        // Verify that the sub-model and super-model are both unchanged
+		// Verify that the sub-model and super-model are both unchanged
 
-        // uncommment the next two lines to debug failures
-        //System.out.println("\n**After updating data property:");
-        //printModels(superModel,subModel);
+		// uncommment the next two lines to debug failures
+		//System.out.println("\n**After updating data property:");
+		//printModels(superModel,subModel);
 
-        superModel.removeSubModel(subModel);
+		superModel.removeSubModel(subModel);
 
 		//modtime affects the diff but we don't care about that difference
 		wipeOutModTime(origSubModel);
@@ -121,7 +118,7 @@ public class DataPropertyDaoJenaTest extends AbstractTestClass {
 		wipeOutModTime(superModel);
 
 		Assert.assertTrue(subModel.isIsomorphicWith(origSubModel));
-	    Assert.assertTrue(superModel.isIsomorphicWith(origSuperModel));
+		Assert.assertTrue(superModel.isIsomorphicWith(origSuperModel));
 
 	}
 
@@ -131,7 +128,7 @@ public class DataPropertyDaoJenaTest extends AbstractTestClass {
 		// Detach the submodel for printing to get an accurate
 		// account of what is in each.
 
-	    superModel.removeSubModel(subModel);
+		superModel.removeSubModel(subModel);
 
 		System.out.println("\nThe sub-model has " + subModel.size() + " statements:");
 		System.out.println("---------------------------------------------------");
@@ -139,9 +136,9 @@ public class DataPropertyDaoJenaTest extends AbstractTestClass {
 
 		System.out.println("\nThe super-model has " + superModel.size() + " statements:");
 		System.out.println("---------------------------------------------------");
-	    superModel.write(System.out,"N3",null);
+		superModel.write(System.out,"N3",null);
 
-	    superModel.addSubModel(subModel);
+		superModel.addSubModel(subModel);
 
 	}
 

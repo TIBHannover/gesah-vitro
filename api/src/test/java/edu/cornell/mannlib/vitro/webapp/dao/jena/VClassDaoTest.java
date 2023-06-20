@@ -36,14 +36,14 @@ import stubs.javax.servlet.ServletContextStub;
  */
 
 public class VClassDaoTest extends AbstractTestClass {
-	
+
 	@Before
 	public void setup() {
 		WebappDaoFactoryStub wdf = new WebappDaoFactoryStub();
 		ServletContextStub ctx = new ServletContextStub();
 		new ModelAccessFactoryStub().get(ctx).setWebappDaoFactory(wdf);
 	}
-	
+
 	@Test
 	// Test that the VClassDaoJena::updateVClass method will only update the jena model for
 	// those properties in VClass that have a different value from what is already in the
@@ -59,7 +59,6 @@ public class VClassDaoTest extends AbstractTestClass {
 	// undesirable behavior in the vivo/vitro application.
 	
 
-	
 	public void modelIsolation(){
 
 		// 1. create two models and attach one as a sub-model of the other
@@ -88,9 +87,6 @@ public class VClassDaoTest extends AbstractTestClass {
 		class1.setPropertyValue(subModel.createProperty(VitroVocabulary.DISPLAY_LIMIT), subModel.createTypedLiteral(-1));
 		class1.setPropertyValue(subModel.createProperty(VitroVocabulary.DISPLAY_RANK_ANNOT), subModel.createTypedLiteral(-11));
 		class1.setPropertyValue(subModel.createProperty(VitroVocabulary.SEARCH_BOOST_ANNOT), subModel.createTypedLiteral(2.4f));
-		class1.setPropertyValue(subModel.createProperty(VitroVocabulary.HIDDEN_FROM_DISPLAY_BELOW_ROLE_LEVEL_ANNOT), subModel.createResource("http://vitro.mannlib.cornell.edu/ns/vitro/role#curator"));
-		class1.setPropertyValue(subModel.createProperty(VitroVocabulary.PROHIBITED_FROM_UPDATE_BELOW_ROLE_LEVEL_ANNOT), subModel.createResource("http://vitro.mannlib.cornell.edu/ns/vitro/role#selfEditor"));
-		class1.setPropertyValue(subModel.createProperty(VitroVocabulary.HIDDEN_FROM_PUBLISH_BELOW_ROLE_LEVEL_ANNOT), subModel.createResource("http://vitro.mannlib.cornell.edu/ns/vitro/role#editor"));
 		class1.setPropertyValue(subModel.createProperty(VitroVocabulary.PROPERTY_CUSTOMENTRYFORMANNOT), subModel.createTypedLiteral("this is the custom entry form annotation"));
 		class1.setPropertyValue(subModel.createProperty(VitroVocabulary.PROPERTY_CUSTOMDISPLAYVIEWANNOT), subModel.createTypedLiteral("this is the custom display view annotation"));
 		class1.setPropertyValue(subModel.createProperty(VitroVocabulary.PROPERTY_CUSTOMSHORTVIEWANNOT), subModel.createTypedLiteral("this is the custom short view annotation"));
@@ -116,22 +112,22 @@ public class VClassDaoTest extends AbstractTestClass {
 		WebappDaoFactoryJena wdfj = new WebappDaoFactoryJena(superModel);
 		VClassDaoJena vcdj = (VClassDaoJena) wdfj.getVClassDao();
 		VClass vClass = vcdj.getVClassByURI(class1URI);           // the VClass will be populated with the
-		                                                          // information already in the jena model.
+		// information already in the jena model.
 
 
 		assertEquals(vClass.getName(), class1.getLabel(lang));  //
 
 
-        vcdj.updateVClass(vClass);                                // we haven't changed any values here, so
-                                                                  // the models should be unchanged.
+		vcdj.updateVClass(vClass);                                // we haven't changed any values here, so
+		// the models should be unchanged.
 
-        // Verify that the sub-model and super-model are both unchanged
+		// Verify that the sub-model and super-model are both unchanged
 
-        // uncommment the next two lines to debug failures
-        //System.out.println("\n**After updating VClass:");
-        //printModels(superModel,subModel);
+		// uncommment the next two lines to debug failures
+		//System.out.println("\n**After updating VClass:");
+		//printModels(superModel,subModel);
 
-        superModel.removeSubModel(subModel);
+		superModel.removeSubModel(subModel);
 
 		//modtime affects the diff but we don't care about that difference
 		wipeOutModTime(origSubModel);
@@ -150,7 +146,7 @@ public class VClassDaoTest extends AbstractTestClass {
 		// Detach the submodel for printing to get an accurate
 		// account of what is in each.
 
-	    superModel.removeSubModel(subModel);
+		superModel.removeSubModel(subModel);
 
 		System.out.println("\nThe sub-model has " + subModel.size() + " statements:");
 		System.out.println("---------------------------------------------------");
@@ -158,9 +154,9 @@ public class VClassDaoTest extends AbstractTestClass {
 
 		System.out.println("\nThe super-model has " + superModel.size() + " statements:");
 		System.out.println("---------------------------------------------------");
-	    superModel.write(System.out,"N3",null);
+		superModel.write(System.out,"N3",null);
 
-	    superModel.addSubModel(subModel);
+		superModel.addSubModel(subModel);
 
 	}
 
