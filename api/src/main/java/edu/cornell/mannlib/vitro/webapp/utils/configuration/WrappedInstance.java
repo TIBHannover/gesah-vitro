@@ -128,10 +128,9 @@ public class WrappedInstance<T> {
 			}
 			pm.confirmCompatible(ps);
 
-			if (ps instanceof ResourcePropertyStatement) {
+			if (!pm.asString && ps instanceof ResourcePropertyStatement) {
 				ResourcePropertyStatement rps = (ResourcePropertyStatement) ps;
-				Object subordinate = loader.loadInstance(rps.getValue(),
-						pm.getParameterType());
+				Object subordinate = loader.loadSubordinateInstance(rps.getValue(), pm.getParameterType());
 				pm.invoke(instance, subordinate);
 			} else {
 				pm.invoke(instance, ps.getValue());
