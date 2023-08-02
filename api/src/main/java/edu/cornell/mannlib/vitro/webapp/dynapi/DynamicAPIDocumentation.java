@@ -15,6 +15,7 @@ import org.apache.commons.logging.LogFactory;
 
 import edu.cornell.mannlib.vitro.webapp.dynapi.components.APIInformation;
 import edu.cornell.mannlib.vitro.webapp.dynapi.components.CustomRESTAction;
+import edu.cornell.mannlib.vitro.webapp.dynapi.components.HTTPMethod;
 import edu.cornell.mannlib.vitro.webapp.dynapi.components.Procedure;
 import edu.cornell.mannlib.vitro.webapp.dynapi.components.RPC;
 import edu.cornell.mannlib.vitro.webapp.dynapi.components.NullProcedure;
@@ -376,7 +377,24 @@ public class DynamicAPIDocumentation {
        
         if (targetRPC != null) {
             try (Procedure action = actionPool.get(targetRPC)) {
-                pathItem.setPut(customRESTActionPutOperation(action, tag));
+                String httpMethodName = customRESTAction.getHttpMethodName();
+                    switch (httpMethodName) {
+                    case "POST":
+                        pathItem.setPost(customRESTActionPostOperation(action, tag));
+                        break;
+                    case "GET":
+                        pathItem.setGet(customRESTActionGetOperation(action, tag));
+                        break;
+                    case "DELETE":
+                        pathItem.setDelete(customRESTActionDeleteOperation(action, tag));
+                        break;
+                    case "PUT":
+                        pathItem.setPut(customRESTActionPutOperation(action, tag));
+                        break;
+                    case "PATCH":
+                        pathItem.setPatch(customRESTActionPatchOperation(action, tag));
+                        break;
+                    }
             }
         }
 
