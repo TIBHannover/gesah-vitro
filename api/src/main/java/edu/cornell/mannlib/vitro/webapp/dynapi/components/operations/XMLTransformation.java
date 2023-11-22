@@ -6,10 +6,12 @@ import java.nio.charset.StandardCharsets;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
@@ -34,6 +36,7 @@ import edu.cornell.mannlib.vitro.webapp.utils.configuration.Property;
 public class XMLTransformation extends AbstractOperation {
 
     private static final Log log = LogFactory.getLog(XMLTransformation.class);
+    private static final ErrorListener errorListener = createXMLErrorListener();
     private Parameter xsltParam;
     private Parameter inputXmlParam;
     private Parameter outputXmlParam;
@@ -96,6 +99,7 @@ public class XMLTransformation extends AbstractOperation {
                   InputStream styleInputStream = IOUtils.toInputStream(defaultValue, StandardCharsets.UTF_8);
                   Source stylesource = new StreamSource(styleInputStream);
                   TransformerFactory transformerFactory = TransformerFactory.newInstance("net.sf.saxon.TransformerFactoryImpl", null);
+                  transformerFactory.setErrorListener(errorListener);
                   transformTemplates = transformerFactory.newTemplates(stylesource);
               }
           }
@@ -112,6 +116,7 @@ public class XMLTransformation extends AbstractOperation {
         InputStream styleInputStream = IOUtils.toInputStream(styles, StandardCharsets.UTF_8);
         Source stylesource = new StreamSource(styleInputStream);
         TransformerFactory transformerFactory = TransformerFactory.newInstance("net.sf.saxon.TransformerFactoryImpl", null);
+        transformerFactory.setErrorListener(errorListener);
         Transformer transformer = transformerFactory.newTransformer(stylesource);
         if (transformer == null) {
             throw new Exception("Failed to initialize transformer. Check styles.");
@@ -153,5 +158,24 @@ public class XMLTransformation extends AbstractOperation {
         }
 
         return result;
+    }
+    
+    private static ErrorListener createXMLErrorListener() {
+        return new ErrorListener() {
+            @Override
+            public void warning(TransformerException e) throws TransformerException {
+                log.warn(e, e);
+            }
+
+            @Override
+            public void error(TransformerException e) throws TransformerException {
+                log.error(e, e);
+            }
+
+            @Override
+            public void fatalError(TransformerException e) throws TransformerException {
+                log.error(e, e);
+            }
+        };
     }
 }
