@@ -82,6 +82,24 @@ public class RdfLiteralHash {
         return hashMe.hashCode();
     }
     
+    /**
+     * Make a hash based on individual, property, literal and (lang or datatype).
+     *
+     * @param subjectUri Statement subject uri
+     * @param propertyUri Statement property uri
+     * @param propertyTypeUri Statement property type uri
+     * @param value Literal lexical form
+     * @param lang  Literal language
+     * @return a value between MIN_INTEGER and MAX_INTEGER
+     */
+    public static Integer makeRdfLiteralHash(String subjectUri, String propertyUri, String propertyTypeUri, String value,
+            String lang) {
+        DataPropertyStatementImpl dps = new DataPropertyStatementImpl(subjectUri, propertyUri, value);
+        dps.setDatatypeURI(propertyTypeUri);
+        dps.setLanguage(lang);
+        return makeRdfLiteralHash(dps);
+    }
+    
     
     private static String replaceIntegers(String predicate) {
         predicate = predicate.replaceAll(integerPattern, "http://www.w3.org/2001/XMLSchema#integer");
