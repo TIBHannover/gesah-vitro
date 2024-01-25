@@ -31,6 +31,7 @@ import edu.cornell.mannlib.vitro.webapp.utils.developer.Key;
 import edu.cornell.mannlib.vitro.webapp.web.directives.IndividualShortViewDirective;
 import edu.cornell.mannlib.vitro.webapp.web.directives.UrlDirective;
 import edu.cornell.mannlib.vitro.webapp.web.directives.WidgetDirective;
+import edu.cornell.mannlib.vitro.webapp.web.methods.DataPropertyEditKeyMethod;
 import edu.cornell.mannlib.vitro.webapp.web.methods.IndividualLocalNameMethod;
 import edu.cornell.mannlib.vitro.webapp.web.methods.IndividualPlaceholderImageUrlMethod;
 import edu.cornell.mannlib.vitro.webapp.web.methods.IndividualProfileUrlMethod;
@@ -271,6 +272,8 @@ public abstract class FreemarkerConfiguration {
 			c.setSharedVariable("placeholderImageUrl",
 					new IndividualPlaceholderImageUrlMethod());
 			c.setSharedVariable("i18n", new I18nMethodModel());
+			c.setSharedVariable("dataPropertyEditKey", new DataPropertyEditKeyMethod());
+			
 		}
 
 		private Map<String, Object> getRevisionInfo(ServletContext ctx) {
