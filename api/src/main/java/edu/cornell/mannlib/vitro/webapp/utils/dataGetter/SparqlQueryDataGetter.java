@@ -4,15 +4,18 @@ package edu.cornell.mannlib.vitro.webapp.utils.dataGetter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
+import org.apache.jena.query.ParameterizedSparqlString;
 import org.apache.jena.query.Query;
 import org.apache.jena.query.QueryExecution;
 import org.apache.jena.query.QueryExecutionFactory;
@@ -37,6 +40,9 @@ public class SparqlQueryDataGetter extends DataGetterBase implements DataGetter{
     private static final String queryPropertyURI = "<" + DisplayVocabulary.QUERY + ">";
     private static final String saveToVarPropertyURI= "<" + DisplayVocabulary.SAVE_TO_VAR+ ">";
     private static final String queryModelPropertyURI= "<" + DisplayVocabulary.QUERY_MODEL+ ">";
+    private static final String uriParam = "<" + DisplayVocabulary.DISPLAY_URI_PARAM + ">";
+    private static final String stringParam = "<" + DisplayVocabulary.DISPLAY_STRING_PARAM + ">";
+
 
     public static final String defaultVarNameForResults = "results";
     private static final String defaultTemplate = "menupage--defaultSparql.ftl";
@@ -45,6 +51,9 @@ public class SparqlQueryDataGetter extends DataGetterBase implements DataGetter{
     String queryText;
     String saveToVar;
     String modelURI;
+    Set<String> uriParams = new HashSet<String>();
+    Set<String> stringParams = new HashSet<String>();
+
     VitroRequest vreq;
     ServletContext context;
 
@@ -108,9 +117,22 @@ public class SparqlQueryDataGetter extends DataGetterBase implements DataGetter{
                     }else{
                         this.saveToVar = defaultVarNameForResults;
                     }
+                    
+                    addTypedParameter("uriParam", uriParams, soln);
+                    addTypedParameter("stringParam", stringParams, soln);
                 }
             }finally{ qexec.close(); }
         }finally{ displayModel.leaveCriticalSection(); }
+    }
+
+    private void addTypedParameter(String name, Set<String> set, QuerySolution soln) {
+        RDFNode uriNode = soln.get(name);
+        if (uriNode != null && uriNode.isLiteral()) {
+            String uriParam = uriNode.asLiteral().getLexicalForm();
+            if (!StringUtils.isBlank(uriParam)) {
+                set.add(uriParam);
+            }
+        }
     }
 
     /**
@@ -118,10 +140,13 @@ public class SparqlQueryDataGetter extends DataGetterBase implements DataGetter{
      */
     private static final String dataGetterQuery =
         "PREFIX display: <" + DisplayVocabulary.DISPLAY_NS +"> \n" +
-        "SELECT ?query ?saveToVar ?queryModel WHERE { \n" +
+        "SELECT ?query ?saveToVar ?queryModel ?uriParam ?stringParam \n" +
+        "WHERE { \n" +
         "  ?dataGetterURI "+queryPropertyURI+" ?query . \n" +
         "  OPTIONAL{ ?dataGetterURI "+saveToVarPropertyURI+" ?saveToVar } \n " +
         "  OPTIONAL{ ?dataGetterURI "+queryModelPropertyURI+" ?queryModel } \n" +
+        "  OPTIONAL{ ?dataGetterURI " + uriParam + " ?uriParam } \n" +
+        "  OPTIONAL{ ?dataGetterURI " + stringParam + " ?stringParam } \n" +
         "}";
 
 
@@ -159,32 +184,60 @@ public class SparqlQueryDataGetter extends DataGetterBase implements DataGetter{
 	 * InitialBindings don't always work, and besides, RDFService doesn't accept
 	 * them. So do a text-based substitution.
 	 *
-	 * This assumes that every parameter is a URI. What if we want to substitute
-	 * a string value?
+	 * This assumes that every parameter is a URI unless data getter has specified
+	 * parameters. 
 	 */
-	private String bindParameters(String text, Map<String, String> merged) {
-		String bound = text;
-		for (String key : merged.keySet()) {
-			String value = merged.get(key);
-			if (value.startsWith("http://") || value.startsWith("https://")) {
-				/*
-				 * UQAM-Optimization if the "value" looks like an URI then wrap the value with the characters '<' '>'
-				 *
-				 */
-				bound = bound.replaceAll("([?$]" + key + ")([^a-zA-Z0-9_\\-])", "<" + value + ">$2");
-			} else {
-				bound = bound.replaceAll("([?$]" + key + ")([^a-zA-Z0-9_\\-])", value + "$2");
-			}
-		}
-		if (log.isDebugEnabled()) {
-			log.debug("parameters: " + merged);
-			log.debug("query before binding parameters:" + text);
-			log.debug("query after binding parameters: " + bound);
-		}
-		return bound;
-	}
+    private String bindParameters(String text, Map<String, String> parameters) {
+        ParameterizedSparqlString pss = new ParameterizedSparqlString(text);
+        if (!isLegacyMode()) {
+            substituteURIs(parameters, uriParams, pss);
+            substituteStrings(parameters, stringParams, pss);
+        } else {
+            // Substitute all variables as uris
+            substituteURIs(parameters, parameters.keySet(), pss);
+        }
 
-	/**
+        if (log.isDebugEnabled()) {
+            log.debug("parameters: " + parameters);
+            log.debug("query before binding parameters:" + text);
+            log.debug("query after binding parameters: " + pss.toString());
+        }
+        return pss.toString();
+    }
+
+    private void substituteURIs(Map<String, String> parameters, Set<String> keys, ParameterizedSparqlString pss) {
+        for (String key : keys) {
+            String value = parameters.get(key);
+            if (value != null) {
+                pss.setIri(key, value);
+            }
+        }
+    }
+
+    private void substituteStrings(Map<String, String> parameters, Set<String> keys, ParameterizedSparqlString pss) {
+        for (String key : keys) {
+            String value = parameters.get(key);
+            if (value != null) {
+                pss.setLiteral(key, value);
+            }
+        }
+    }
+    /**
+     * Checks if at least one parameter was defined in data getter,
+     * if not then work in legacy mode.
+     * @return
+     */
+	private boolean isLegacyMode() {
+        if (!uriParams.isEmpty()) {
+            return false; 
+        }
+        if (!stringParams.isEmpty()) {
+            return false; 
+        }
+        return true;
+    }
+
+    /**
 	 * Do the query and return a result. This is in its own method, with
 	 * protected access, to make testing easy.
 	 */

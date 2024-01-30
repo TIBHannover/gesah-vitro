@@ -126,6 +126,8 @@ public class DisplayVocabulary {
     public static final String SAVE_TO_VAR = DISPLAY_NS + "saveToVar" ;
     public static final String QUERY_MODEL = DISPLAY_NS + "queryModel";
     public static final String QUERY = DISPLAY_NS + "query";
+    public static final String DISPLAY_URI_PARAM = DISPLAY_NS + "uri";
+    public static final String DISPLAY_STRING_PARAM = DISPLAY_NS + "string";
 
     /* URI of property for Fixed HTML Generator */
     public static final String FIXED_HTML_VALUE = DISPLAY_NS + "htmlValue";
