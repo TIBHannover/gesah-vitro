@@ -392,6 +392,7 @@ public class FreemarkerHttpServlet extends VitroHttpServlet  {
             }
 
             requestUrls.put("currentPage", getCurrentPageUrl(vreq));
+            requestUrls.put("requestUrl", getFullRequestUrl(vreq));
             requestUrls.put("referringPage", getReferringPageUrl(vreq));
 
             if (PolicyHelper.isAuthorizedForActions(vreq, SimplePermission.EDIT_OWN_ACCOUNT.ACTION)) {
@@ -401,6 +402,16 @@ public class FreemarkerHttpServlet extends VitroHttpServlet  {
             log.error(e, e);
         }
         return requestUrls;
+    }
+
+    private String getFullRequestUrl(VitroRequest vreq) {
+        StringBuffer requestUrl = vreq.getRequestURL();
+        String queryString = vreq.getQueryString();
+        if (StringUtils.isBlank(queryString)) {
+            return requestUrl.toString();
+        } else {
+            return requestUrl.append('?').append(queryString).toString();
+        }
     }
 
     private String getCurrentPageUrl(HttpServletRequest request) {
