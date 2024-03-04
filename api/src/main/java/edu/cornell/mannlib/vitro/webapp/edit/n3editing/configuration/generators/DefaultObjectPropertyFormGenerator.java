@@ -14,6 +14,7 @@ import java.util.Set;
 import javax.servlet.http.HttpSession;
 
 import edu.cornell.mannlib.vitro.webapp.edit.n3editing.VTwo.JspToGeneratorMapping;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -263,6 +264,11 @@ public class DefaultObjectPropertyFormGenerator implements EditConfigurationGene
     	}else{
 	        addFormSpecificData(editConfiguration, vreq);
     	}
+    	
+        String returnUrl = vreq.getParameter("returnURL");
+        if (!StringUtils.isBlank(returnUrl)) {
+            editConfiguration.setUrlToReturnTo(returnUrl);
+        }
 
     	return editConfiguration;
     }
@@ -294,6 +300,10 @@ public class DefaultObjectPropertyFormGenerator implements EditConfigurationGene
     		formSpecificData.put("customErrorMessages", customErrorMessages);
     		editConfiguration.setFormSpecificData(formSpecificData);
     	}
+        String returnUrl = vreq.getParameter("returnURL");
+        if (!StringUtils.isBlank(returnUrl)) {
+            editConfiguration.setUrlToReturnTo(returnUrl);
+        }
     	return editConfiguration;
 	}
 
