@@ -29,6 +29,7 @@
     </p>
 
     <input type="hidden" name="subjectUri"   value="${editConfiguration.subjectUri}" role="input" />
+    <input type="hidden" name="returnURL" value="${editConfiguration.pageData.redirectUrl!''}" role="input" />
     <input type="hidden" name="predicateUri" value="${editConfiguration.predicateUri}" role="input" />
     <input type="hidden" name="domainUri" value="${editConfiguration.domainUri!}" role="input" />
     <input type="hidden" name="rangeUri" value="${editConfiguration.rangeUri!}" role="input" />

@@ -4,6 +4,7 @@ package edu.cornell.mannlib.vitro.webapp.edit.n3editing.configuration.generators
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -43,6 +44,12 @@ public class DefaultDeleteGenerator extends BaseEditConfigurationGenerator imple
     	if(editConfiguration == null) {
     		editConfiguration = setupEditConfiguration(vreq, session);
     	}
+    	
+        String returnUrl = vreq.getParameter("returnURL");
+        if (!StringUtils.isBlank(returnUrl)) {
+            editConfiguration.setUrlToReturnTo(returnUrl);
+            editConfiguration.addFormSpecificData("redirectUrl", returnUrl);
+        }
     	//prepare update?
     	prepare(vreq, editConfiguration);
     	if (editConfiguration.getPredicateUri() == null && editConfiguration.getSubjectUri() == null) {

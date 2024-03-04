@@ -7,6 +7,7 @@ import java.util.HashMap;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -66,7 +67,11 @@ public class DeletePropertyController extends FreemarkerHttpServlet {
 
 
     private String getRedirectUrl(VitroRequest vreq) {
-    	// TODO Auto-generated method stub
+
+        String returnUrl = vreq.getParameter("returnURL");
+        if (!StringUtils.isBlank(returnUrl)) {
+            return returnUrl;
+        }
     	String subjectUri = EditConfigurationUtils.getSubjectUri(vreq);
     	String predicateUri = EditConfigurationUtils.getPredicateUri(vreq);
     	Property prop = ResourceFactory.createProperty(predicateUri);
