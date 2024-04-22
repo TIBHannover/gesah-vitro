@@ -124,10 +124,11 @@ public class SearchFiltering {
             + "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"
             + "PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>\n"
             + "PREFIX search: <https://vivoweb.org/ontology/vitro-search#> \n"
-            + "SELECT ( STR(?sort_label) as ?label ) ?id ?searchField ?multilingual ?isAsc ?sort_order \n"
+            + "SELECT ?label ?id ?searchField " +
+            "?multilingual ?isAsc ?sort_order ?fallback ?display\n"
             + "WHERE {\n"
             + "    ?sort rdf:type search:Sort . \n"
-            + "    ?sort rdfs:label ?sort_label .\n"
+            + "    ?sort rdfs:label ?label .\n"
             + "    OPTIONAL {\n"
             + "        ?sort search:sortField ?field .\n"
             + "        ?field search:indexField ?searchField  .\n"
@@ -143,10 +144,14 @@ public class SearchFiltering {
             + "        ?sort search:isAscending ?f_ord  .\n"
             + "        BIND(?f_ord as ?f_order) .\n"
             + "    }\n"
+            + "    OPTIONAL {\n"
+            + "        ?sort search:hasFallback/search:id ?fallback .\n"
+            + "    }\n"
             + "    OPTIONAL{ "
             + "        ?sort search:order ?s_order .\n"
             + "        BIND(?s_order as ?sort_order_found).\n"
             + "    }\n"
+            + "    OPTIONAL {?sort search:display ?display }\n"
             + "    BIND(coalesce(?sort_order_found, 0) as ?sort_order)\n"
             + "    BIND(COALESCE(?f_order, false) as ?isAsc)\n"
             + "    BIND(COALESCE(?bind_multilingual, false) as ?multilingual)\n"
@@ -222,11 +227,16 @@ public class SearchFiltering {
         return requestFilters;
     }
 
-    public static Map<String, SearchFilter> readFilterConfigurations(Set<String> currentRoles) {
+    public static Map<String, SearchFilter> readFilterConfigurations(Set<String> currentRoles, VitroRequest vreq) {
         long startTime = System.nanoTime();
 
         Map<String, SearchFilter> filtersByField = new LinkedHashMap<>();
-        Model model = ModelAccess.getInstance().getOntModelSelector().getDisplayModel();
+        Model model;
+        if (vreq != null) {
+        	model = ModelAccess.on(vreq).getOntModelSelector().getDisplayModel();
+        } else {
+        	model = ModelAccess.getInstance().getOntModelSelector().getDisplayModel();
+        }
         if (model == null) {
             return filtersByField;
         }
@@ -281,7 +291,7 @@ public class SearchFiltering {
     }
 
     public static void addDefaultFilters(SearchQuery query, Set<String> currentRoles) {
-        Map<String, SearchFilter> filtersByField = SearchFiltering.readFilterConfigurations(currentRoles);
+        Map<String, SearchFilter> filtersByField = SearchFiltering.readFilterConfigurations(currentRoles, null);
         SearchFiltering.addPreconfiguredFiltersToQuery( query, filtersByField.values());
     }
 
@@ -305,9 +315,9 @@ public class SearchFiltering {
         }
     }
 
-    public static List<SearchFilterGroup> readFilterGroupsConfigurations(Map<String, SearchFilter> filtersById) {
+    public static List<SearchFilterGroup> readFilterGroupsConfigurations(VitroRequest vreq, Map<String, SearchFilter> filtersById) {
         Map<String, SearchFilterGroup> groups = new LinkedHashMap<>();
-        Model model = ModelAccess.getInstance().getOntModelSelector().getDisplayModel();
+        Model model = ModelAccess.on(vreq).getOntModelSelector().getDisplayModel();
         model.enterCriticalSection(Lock.READ);
         try {
             Query facetQuery = QueryFactory.create(FILTER_GROUPS_QUERY);
@@ -345,9 +355,9 @@ public class SearchFiltering {
         return new LinkedList<SearchFilterGroup>(groups.values());
     }
 
-    public static Map<String, SortConfiguration> getSortConfigurations() {
+    public static Map<String, SortConfiguration> getSortConfigurations(VitroRequest vreq) {
         Map<String, SortConfiguration> sortConfigurations = new LinkedHashMap<>();
-        Model model = ModelAccess.getInstance().getOntModelSelector().getDisplayModel();
+        Model model = ModelAccess.on(vreq).getOntModelSelector().getDisplayModel();
         model.enterCriticalSection(Lock.READ);
         try {
             Query facetQuery = QueryFactory.create(SORT_QUERY);
@@ -364,11 +374,8 @@ public class SearchFiltering {
                 String id = idNode == null ? "" : idNode.toString();
                 String label = solution.get("label").toString();
 
-                SortConfiguration config = null;
-                if (sortConfigurations.containsKey(id)) {
-                    config = sortConfigurations.get(id);
-                } else {
-                    config = new SortConfiguration(id, label, field);
+                if (!sortConfigurations.containsKey(id)) {
+                    SortConfiguration config = new SortConfiguration(id, label, field);
 
                     RDFNode multilingual = solution.get("multilingual");
                     if (multilingual != null) {
@@ -378,10 +385,17 @@ public class SearchFiltering {
                     if (isAsc != null) {
                         config.setAscOrder(isAsc.asLiteral().getBoolean());
                     }
-
+                    RDFNode fallback = solution.get("fallback");
+                    if (fallback != null && fallback.isLiteral()) {
+                        config.setFallback(fallback.asLiteral().toString());
+                    }
                     RDFNode order = solution.get("sort_order");
                     if (order != null) {
                         config.setOrder(order.asLiteral().getInt());
+                    }
+                    RDFNode display = solution.get("display");
+                    if (display != null) {
+                        config.setDisplay(display.asLiteral().getBoolean());
                     }
                     sortConfigurations.put(id, config);
                 }
@@ -521,9 +535,9 @@ public class SearchFiltering {
         return true;
     }
 
-    static String getUriLabel(String uri) {
+    static String getUriLabel(String uri, VitroRequest vreq) {
         String result = "";
-        Model model = ModelAccess.getInstance().getOntModelSelector().getFullModel();
+        Model model = ModelAccess.on(vreq).getOntModelSelector().getFullModel();
         model.enterCriticalSection(Lock.READ);
         try {
             QuerySolutionMap initialBindings = new QuerySolutionMap();
