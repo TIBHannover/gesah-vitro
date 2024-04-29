@@ -260,6 +260,7 @@ public class SearchFiltering {
                 } else {
                     filter = createSearchFilter(filtersByField, solution, resultFilterId, resultFieldName);
                 }
+                filter.setType(solution.get("filter_type"));
                 if (solution.get("value_id") == null) {
                     continue;
                 }
@@ -414,7 +415,6 @@ public class SearchFiltering {
         filtersByField.put(resultFieldName, filter);
         filter.setName(solution.get("filter_label"));
         filter.setOrder(solution.get("filter_order"));
-        filter.setType(solution.get("filter_type"));
         if (solution.get("isUri") != null && "true".equals(solution.get("isUri").toString())) {
             filter.setLocalizationRequired(true);
         }
