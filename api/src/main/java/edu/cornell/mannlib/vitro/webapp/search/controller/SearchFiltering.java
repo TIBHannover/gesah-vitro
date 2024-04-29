@@ -233,9 +233,9 @@ public class SearchFiltering {
         Map<String, SearchFilter> filtersByField = new LinkedHashMap<>();
         Model model;
         if (vreq != null) {
-        	model = ModelAccess.on(vreq).getOntModelSelector().getDisplayModel();
+            model = ModelAccess.on(vreq).getOntModelSelector().getDisplayModel();
         } else {
-        	model = ModelAccess.getInstance().getOntModelSelector().getDisplayModel();
+            model = ModelAccess.getInstance().getOntModelSelector().getDisplayModel();
         }
         if (model == null) {
             return filtersByField;
@@ -315,7 +315,8 @@ public class SearchFiltering {
         }
     }
 
-    public static List<SearchFilterGroup> readFilterGroupsConfigurations(VitroRequest vreq, Map<String, SearchFilter> filtersById) {
+    public static List<SearchFilterGroup> readFilterGroupsConfigurations(VitroRequest vreq,
+            Map<String, SearchFilter> filtersById) {
         Map<String, SearchFilterGroup> groups = new LinkedHashMap<>();
         Model model = ModelAccess.on(vreq).getOntModelSelector().getDisplayModel();
         model.enterCriticalSection(Lock.READ);
