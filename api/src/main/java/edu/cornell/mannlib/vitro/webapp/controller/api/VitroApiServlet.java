@@ -54,7 +54,12 @@ public class VitroApiServlet extends HttpServlet {
 					+ "last names and a valid email address.");
 		}
 
-		if (!auth.isCurrentPasswordArgon2(account, password)) {
+		boolean credentialsProvided = auth.isCurrentPasswordArgon2(account, password);
+		//Check authorization if user is already authenticated or public access allowed
+		if (PolicyHelper.isAuthorizedForActions(req, requiredActions)) {
+		    return;
+		}
+		if (!credentialsProvided) {
 			log.debug("Invalid: '" + email + "'/'" + password + "'");
 			throw new AuthException("email/password combination is not valid");
 		}
