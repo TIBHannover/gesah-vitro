@@ -22,6 +22,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import edu.cornell.mannlib.vitro.webapp.application.ApplicationUtils;
+import edu.cornell.mannlib.vitro.webapp.auth.attributes.AccessOperation;
+import edu.cornell.mannlib.vitro.webapp.auth.objects.AccessObject;
+import edu.cornell.mannlib.vitro.webapp.auth.objects.IndividualAccessObject;
+import edu.cornell.mannlib.vitro.webapp.auth.policy.PolicyHelper;
+import edu.cornell.mannlib.vitro.webapp.auth.requestedAction.AuthorizationRequest;
+import edu.cornell.mannlib.vitro.webapp.auth.requestedAction.SimpleAuthorizationRequest;
 import edu.cornell.mannlib.vitro.webapp.beans.ApplicationBean;
 import edu.cornell.mannlib.vitro.webapp.beans.Individual;
 import edu.cornell.mannlib.vitro.webapp.controller.VitroRequest;
@@ -232,10 +238,13 @@ public class PagedSearchController extends FreemarkerHttpServlet {
             for (SearchResultDocument doc : docs) {
                 try {
                     String uri = doc.getStringValue(VitroSearchTermNames.URI);
-                    Individual ind = iDao.getIndividualByURI(uri);
-                    if (ind != null) {
-                        ind.setSearchSnippet(getSnippet(doc, response));
-                        individuals.add(ind);
+                    boolean isAuthorized = isAuthorized(vreq, uri);
+                    if (isAuthorized) {
+                        Individual ind = iDao.getIndividualByURI(uri);
+                        if (ind != null) {
+                            ind.setSearchSnippet(getSnippet(doc, response));
+                            individuals.add(ind);
+                        }   
                     }
                 } catch (Exception e) {
                     log.error("Problem getting usable individuals from search hits. ", e);
@@ -313,6 +322,14 @@ public class PagedSearchController extends FreemarkerHttpServlet {
         } catch (Throwable e) {
             return doSearchError(e, format);
         }
+    }
+
+    private boolean isAuthorized(VitroRequest vreq, String uri) {
+        AccessObject ao = new IndividualAccessObject(uri);
+        ao.setModel(vreq.getJenaOntModel());
+        AuthorizationRequest request = new SimpleAuthorizationRequest(ao, AccessOperation.DISPLAY);
+        boolean isAuthorized = PolicyHelper.isAuthorizedForActions(vreq, request);
+        return isAuthorized;
     }
 
     private long getSpentTime(long startTime) {
