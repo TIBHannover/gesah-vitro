@@ -250,6 +250,9 @@ public class BasicValidationVTwo {
             if ( datatype == null ) {
                 throw new RuntimeException( datatypeURI + " is not a recognized datatype");
             }
+            if ("http://www.w3.org/1999/02/22-rdf-syntax-ns#XMLLiteral".equals(datatypeURI)) {
+                return null;
+            } else
             if ( datatype.isValid(value) ) {
                 return null;
             } else {
