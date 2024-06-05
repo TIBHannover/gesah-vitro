@@ -76,7 +76,7 @@ public class IndividualController extends FreemarkerHttpServlet {
 				 * "accept" HTTP header, redirect them to the preferred URL.
 				 */
 				return new RedirectResponseValues(requestInfo.getRedirectUrl(),
-						HttpServletResponse.SC_SEE_OTHER);
+						HttpServletResponse.SC_MOVED_TEMPORARILY);
 			case NO_INDIVIDUAL:
 				/*
 				 * If we can't figure out what individual you want, or if there
