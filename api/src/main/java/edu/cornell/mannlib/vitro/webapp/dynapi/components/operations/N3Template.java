@@ -81,10 +81,10 @@ public class N3Template extends AbstractOperation {
         List<Model> retractionModels;
         try {
             additionModels = ProcessRdfForm.parseN3ToRDF(Arrays.asList(substitutedN3AdditionsTemplate),
-                    ProcessRdfForm.N3ParseType.REQUIRED);
+                    ProcessRdfForm.N3ParseType.OPTIONAL);
 
             retractionModels = ProcessRdfForm.parseN3ToRDF(Arrays.asList(substitutedN3RetractionsTemplate),
-                    ProcessRdfForm.N3ParseType.REQUIRED);
+                    ProcessRdfForm.N3ParseType.OPTIONAL);
         } catch (Exception e) {
             log.error("Error while trying to parse N3Template string and create a Jena rdf Model", e);
             return OperationResult.internalServerError();
