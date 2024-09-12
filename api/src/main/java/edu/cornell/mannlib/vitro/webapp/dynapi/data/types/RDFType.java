@@ -6,9 +6,11 @@ import edu.cornell.mannlib.vitro.webapp.dynapi.components.Removable;
 import edu.cornell.mannlib.vitro.webapp.utils.configuration.Property;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.jena.datatypes.BaseDatatype;
 import org.apache.jena.datatypes.RDFDatatype;
 import org.apache.jena.datatypes.xsd.XSDDatatype;
 import org.apache.jena.datatypes.xsd.impl.RDFLangString;
+import org.apache.jena.datatypes.xsd.impl.XMLLiteralType;
 
 public class RDFType implements Removable {
 
@@ -32,6 +34,14 @@ public class RDFType implements Removable {
         }
         if (ANY_URI.equals(name)) {
             rdfDataType = XSDDatatype.XSDanyURI;
+            return;
+        }
+        if ("Literal".equals(name)) {
+            rdfDataType = new BaseDatatype("http://www.w3.org/2000/01/rdf-schema#Literal");
+            return;
+        }
+        if ("XMLLiteral".equals(name)) {
+            rdfDataType = XMLLiteralType.theXMLLiteralType;
             return;
         }
         rdfDataType = new XSDDatatype(name);
