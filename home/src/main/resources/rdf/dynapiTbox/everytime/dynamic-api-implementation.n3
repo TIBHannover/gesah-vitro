@@ -1,0 +1,121 @@
+# $This file is distributed under the terms of the license in LICENSE$
+
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix components: <java:edu.cornell.mannlib.vitro.webapp.dynapi.components.> .
+@prefix operations: <java:edu.cornell.mannlib.vitro.webapp.dynapi.components.operations.> .
+@prefix steps: <java:edu.cornell.mannlib.vitro.webapp.dynapi.components.steps.> .
+@prefix access: <java:edu.cornell.mannlib.vitro.webapp.dynapi.access.> .
+@prefix dynapi: <https://vivoweb.org/ontology/vitro-dynamic-api#> .
+@prefix types: <java:edu.cornell.mannlib.vitro.webapp.dynapi.data.types.> .
+
+dynapi:Procedure dynapi:implementedBy components:Procedure .
+
+dynapi:OperationalStep dynapi:implementedBy steps:OperationalStep .
+
+dynapi:ConditionalStep dynapi:implementedBy steps:ConditionalStep .
+
+dynapi:Step dynapi:implementedBy steps:Step .
+
+dynapi:Operation dynapi:implementedBy operations:AbstractOperation .
+
+dynapi:N3Template dynapi:implementedBy operations:N3Template .
+
+dynapi:SparqlSelectQuery dynapi:implementedBy operations:SparqlSelectQuery .
+
+dynapi:SparqlConstructQuery dynapi:implementedBy operations:SparqlConstructQuery .
+
+dynapi:SolrQuery dynapi:implementedBy operations:SolrQuery .
+
+dynapi:ReportGenerator dynapi:implementedBy operations:ReportGenerator .
+
+dynapi:Model dynapi:implementedBy components:Parameter .
+
+dynapi:ModelWriter dynapi:implementedBy operations:ModelWriter .
+
+dynapi:Parameter dynapi:implementedBy components:Parameter .
+
+dynapi:ParameterType dynapi:implementedBy types:ParameterType .
+
+dynapi:RDFType dynapi:implementedBy types:RDFType .
+
+dynapi:DefaultFormat dynapi:implementedBy types:DefaultFormat .
+
+dynapi:ConversionConfiguration dynapi:implementedBy types:ConversionConfiguration .
+
+dynapi:PrimitiveSerializationType dynapi:implementedBy components:serialization.PrimitiveSerializationType .
+
+dynapi:ArraySerializationType dynapi:implementedBy components:serialization.ArraySerializationType .
+
+dynapi:JsonContainerSerializationType dynapi:implementedBy components:serialization.JsonContainerSerializationType .
+
+dynapi:ResourceAPI dynapi:implementedBy components:ResourceAPI .
+
+dynapi:Rpc dynapi:implementedBy components:RPC .
+
+dynapi:HttpMethod dynapi:implementedBy components:HTTPMethod .
+
+dynapi:CustomRESTAction dynapi:implementedBy components:CustomRESTAction .
+
+dynapi:Api dynapi:implementedBy components:APIInformation .
+
+dynapi:Condition dynapi:implementedBy components:conditions.Condition .
+
+dynapi:ConditionIsNotEmpty dynapi:implementedBy components:conditions.ConditionIsNotEmpty .
+
+dynapi:ConditionContainerContains dynapi:implementedBy components:conditions.ConditionContainerContains .
+
+dynapi:ConditionHasTrueValue dynapi:implementedBy components:conditions.ConditionHasValueTrue .
+
+dynapi:ConditionIsNotInitializedByDefault dynapi:implementedBy components:conditions.ConditionIsNotInitializedByDefault .
+
+dynapi:UserGroup dynapi:implementedBy access:UserGroup .
+
+dynapi:AccessWhitelist dynapi:implementedBy access:AccessWhitelist .
+
+dynapi:GroupAccessWhitelist dynapi:implementedBy access:GroupAccessWhitelist .
+
+dynapi:PoolOperation dynapi:implementedBy operations:PoolOperation .
+
+dynapi:PoolAtomicOperation dynapi:implementedBy operations:PoolAtomicOperation .
+
+dynapi:PoolBulkOperation dynapi:implementedBy operations:PoolBulkOperation .
+
+dynapi:ProcedurePoolBulkOperation dynapi:implementedBy operations:ProcedurePoolBulkOperation .
+
+dynapi:ResourceAPIPoolBulkOperation dynapi:implementedBy operations:ResourceAPIPoolBulkOperation .
+
+dynapi:ProcedurePoolAtomicOperation dynapi:implementedBy operations:ProcedurePoolAtomicOperation .
+
+dynapi:ResourceAPIPoolAtomicOperation dynapi:implementedBy operations:ResourceAPIPoolAtomicOperation .
+
+dynapi:RPCPoolAtomicOperation dynapi:implementedBy operations:RPCPoolAtomicOperation .
+
+dynapi:RPCPoolAtomicOperation dynapi:implementedBy operations:RPCPoolAtomicOperation .
+
+dynapi:ProcedureDescriptor dynapi:implementedBy components:ProcedureDescriptor .
+
+dynapi:Validator dynapi:implementedBy components:validators.Validator .
+
+dynapi:LoopOperation dynapi:implementedBy operations:LoopOperation .
+
+dynapi:ContainerLoader dynapi:implementedBy operations:ContainerLoader .
+
+dynapi:ContainerQuery dynapi:implementedBy operations:ContainerQuery .
+
+dynapi:SumOperation dynapi:implementedBy operations:SumOperation .
+
+dynapi:AssignOperation dynapi:implementedBy operations:AssignOperation .
+
+dynapi:ProcedureCallOperation dynapi:implementedBy operations:ProcedureCallOperation .
+
+dynapi:ShapeValidation dynapi:implementedBy operations:ShapeValidation .
+
+dynapi:ErrorStep dynapi:implementedBy steps:ErrorStep .
+
+dynapi:XMLTransformation dynapi:implementedBy operations:XMLTransformation .
+
+dynapi:XMLValidation dynapi:implementedBy operations:XMLValidation .
+
+dynapi:ParameterSubstitution dynapi:implementedBy components:ParameterSubstitution .

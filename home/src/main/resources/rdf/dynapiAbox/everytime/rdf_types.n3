@@ -1,0 +1,35 @@
+# $This file is distributed under the terms of the license in LICENSE$
+
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix vitro: <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#> .
+@prefix dynapi: <https://vivoweb.org/ontology/vitro-dynamic-api#> .
+@prefix dynapi-rdf-type: <https://vivoweb.org/ontology/vitro-dynamic-api/parameter/rdftype/> .
+
+dynapi-rdf-type:uri
+        a                       dynapi:RDFType;
+        dynapi:name         	"anyURI" ;
+        rdfs:label              "Individualized Resource Identifier rdf type"@en-US ;
+        .
+
+dynapi-rdf-type:integer
+        a                       dynapi:RDFType;
+        dynapi:name         	"integer" ;
+        rdfs:label              "Integer rdf type"@en-US ;
+        .
+
+dynapi-rdf-type:string
+        a                       dynapi:RDFType;
+        dynapi:name         	"string" ;
+        rdfs:label              "String rdf type"@en-US ;
+        .
+
+dynapi-rdf-type:boolean
+        a                       dynapi:RDFType;
+        dynapi:name         	"boolean" ;
+        rdfs:label              "Boolean rdf type"@en-US ;
+        .
+       
+

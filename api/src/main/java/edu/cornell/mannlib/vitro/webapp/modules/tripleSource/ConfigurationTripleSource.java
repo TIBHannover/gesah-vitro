@@ -17,7 +17,12 @@ import static edu.cornell.mannlib.vitro.webapp.modelaccess.ModelNames.INTERFACE_
 import static edu.cornell.mannlib.vitro.webapp.modelaccess.ModelNames.INTERFACE_I18N_FIRSTTIME_BACKUP;
 import static edu.cornell.mannlib.vitro.webapp.modelaccess.ModelNames.ACCESS_CONTROL;
 import static edu.cornell.mannlib.vitro.webapp.modelaccess.ModelNames.ACCESS_CONTROL_FIRSTTIME_BACKUP;
-
+import static edu.cornell.mannlib.vitro.webapp.modelaccess.ModelNames.DYNAMIC_API_ABOX;
+import static edu.cornell.mannlib.vitro.webapp.modelaccess.ModelNames.DYNAMIC_API_ABOX_FIRSTTIME_BACKUP;
+import static edu.cornell.mannlib.vitro.webapp.modelaccess.ModelNames.DYNAMIC_API_TBOX;
+import static edu.cornell.mannlib.vitro.webapp.modelaccess.ModelNames.DYNAMIC_API_TBOX_FIRSTTIME_BACKUP;
+import static edu.cornell.mannlib.vitro.webapp.modelaccess.ModelNames.SHAPES;
+import static edu.cornell.mannlib.vitro.webapp.modelaccess.ModelNames.SHAPES_FIRSTTIME_BACKUP;
 
 
 import org.apache.jena.rdf.model.ModelMaker;
@@ -42,6 +47,12 @@ public abstract class ConfigurationTripleSource implements TripleSource {
 			DISPLAY_FIRSTTIME_BACKUP, 
 			DISPLAY_TBOX_FIRSTTIME_BACKUP, 
 			DISPLAY_DISPLAY_FIRSTTIME_BACKUP, 
+			DYNAMIC_API_ABOX,
+			DYNAMIC_API_ABOX_FIRSTTIME_BACKUP,
+			DYNAMIC_API_TBOX,
+			DYNAMIC_API_TBOX_FIRSTTIME_BACKUP,
+	        SHAPES,
+	        SHAPES_FIRSTTIME_BACKUP,
 			INTERFACE_I18N,
 			INTERFACE_I18N_FIRSTTIME_BACKUP,
 			ACCESS_CONTROL, 

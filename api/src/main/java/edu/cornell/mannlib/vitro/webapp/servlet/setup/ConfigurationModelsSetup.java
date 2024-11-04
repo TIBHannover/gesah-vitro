@@ -7,7 +7,11 @@ import static edu.cornell.mannlib.vitro.webapp.modelaccess.ModelNames.DISPLAY_DI
 import static edu.cornell.mannlib.vitro.webapp.modelaccess.ModelNames.DISPLAY_TBOX;
 import static edu.cornell.mannlib.vitro.webapp.modelaccess.ModelNames.USER_ACCOUNTS;
 import static edu.cornell.mannlib.vitro.webapp.modelaccess.ModelNames.ACCESS_CONTROL;
+import static edu.cornell.mannlib.vitro.webapp.modelaccess.ModelNames.DYNAMIC_API_ABOX;
+import static edu.cornell.mannlib.vitro.webapp.modelaccess.ModelNames.DYNAMIC_API_TBOX;
+import static edu.cornell.mannlib.vitro.webapp.modelaccess.ModelNames.SHAPES;
 import static edu.cornell.mannlib.vitro.webapp.modelaccess.ModelNames.INTERFACE_I18N;
+
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -42,6 +46,9 @@ public class ConfigurationModelsSetup implements ServletContextListener {
 			setupModel(ctx, DISPLAY_DISPLAY, "displayDisplay");
 			setupModel(ctx, USER_ACCOUNTS, "auth");
 			setupModel(ctx, ACCESS_CONTROL, "accessControl");
+			setupModel(ctx, DYNAMIC_API_ABOX, "dynapiAbox");
+			setupModel(ctx, DYNAMIC_API_TBOX, "dynapiTbox");
+	        setupModel(ctx, SHAPES, "shapes");
 			setupModel(ctx, INTERFACE_I18N, "interface-i18n");
 			ss.info(this, "Set up the display models and the user accounts model.");
 		} catch (Exception e) {

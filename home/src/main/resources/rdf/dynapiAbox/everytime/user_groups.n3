@@ -1,0 +1,34 @@
+# $This file is distributed under the terms of the license in LICENSE$
+
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix vitro: <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#> .
+@prefix dynapi: <https://vivoweb.org/ontology/vitro-dynamic-api#> .
+@prefix dynapi_role: <https://vivoweb.org/ontology/vitro-dynamic-api/user-group/> .
+
+dynapi_role:editor
+        a                       dynapi:UserGroup ;
+        rdfs:label              "Editor user group"@en-US ;
+		dynapi:name				"http://vitro.mannlib.cornell.edu/ns/vitro/authorization#EDITOR" ;
+        .
+
+dynapi_role:self-editor
+        a                       dynapi:UserGroup ;
+        rdfs:label              "Self editor user group"@en-US ;
+		dynapi:name				"http://vitro.mannlib.cornell.edu/ns/vitro/authorization#SELF_EDITOR" ;
+        .
+
+dynapi_role:admin
+        a                       dynapi:UserGroup ;
+        rdfs:label              "Admin user group"@en-US ;
+		dynapi:name				"http://vitro.mannlib.cornell.edu/ns/vitro/authorization#ADMIN" ;
+        .
+
+dynapi_role:curator
+        a                       dynapi:UserGroup ;
+        rdfs:label              "Curator user group"@en-US ;
+		dynapi:name				"http://vitro.mannlib.cornell.edu/ns/vitro/authorization#CURATOR" ;
+        .
+        

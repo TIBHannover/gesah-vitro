@@ -1,0 +1,312 @@
+# $This file is distributed under the terms of the license in LICENSE$
+
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix vitro: <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#> .
+@prefix dynapi: <https://vivoweb.org/ontology/vitro-dynamic-api#> .
+@prefix dynapi-serialization-type: <https://vivoweb.org/ontology/vitro-dynamic-api/parameter/serializedtype/> .
+@prefix dynapi-serialization-config: <https://vivoweb.org/ontology/vitro-dynamic-api/parameter/serialization-config/> .
+@prefix dynapi-deserialization-config: <https://vivoweb.org/ontology/vitro-dynamic-api/parameter/deserialization-config/> .
+#-------------------------------------------------------------------------------
+#
+# Serialization/deserialization configurations
+#
+dynapi-serialization-config:byte-array-base-64
+        a                       dynapi:ConversionConfiguration ;
+        rdfs:label              "ByteArray serialization config"@en-US ;
+        dynapi:className 		"edu.cornell.mannlib.vitro.webapp.dynapi.data.implementation.ByteArray" ;
+        dynapi:inputInterface   "edu.cornell.mannlib.vitro.webapp.dynapi.data.implementation.ByteArray" ;
+        dynapi:methodName 		"serialize";
+        dynapi:methodArguments	"";
+        dynapi:isStaticMethod	"false"^^xsd:boolean ;
+        .
+
+dynapi-deserialization-config:byte-array-base-64
+        a                       dynapi:ConversionConfiguration ;
+        rdfs:label              "ByteArray deserialization config"@en-US ;
+        dynapi:className 		"edu.cornell.mannlib.vitro.webapp.dynapi.data.implementation.ByteArray" ;
+        dynapi:methodName 		"deserialize";
+        dynapi:methodArguments	"input";
+        dynapi:isStaticMethod	"true"^^xsd:boolean ;
+        .
+
+dynapi-serialization-config:json-node
+        a                       dynapi:ConversionConfiguration ;
+        rdfs:label              "Fasterxml Json node serialization config"@en-US ;
+        dynapi:inputInterface        "com.fasterxml.jackson.databind.JsonNode" ;
+        dynapi:className 		"edu.cornell.mannlib.vitro.webapp.dynapi.data.implementation.JsonFasterxmlNode" ;
+        dynapi:methodName 		"serialize";
+        dynapi:methodArguments	"input";
+        dynapi:isStaticMethod	"true"^^xsd:boolean ;
+        .
+
+dynapi-deserialization-config:json-node
+        a                       dynapi:ConversionConfiguration ;
+        rdfs:label              "Fasterxml Json node deserialization config"@en-US ;
+        dynapi:className 	"edu.cornell.mannlib.vitro.webapp.dynapi.data.implementation.JsonFasterxmlNode" ;
+        dynapi:methodName 	"deserialize";
+        dynapi:methodArguments	"input";
+        dynapi:isStaticMethod	"true"^^xsd:boolean ;
+        .
+
+dynapi-serialization-config:uri-resource
+        a                       dynapi:ConversionConfiguration ;
+        rdfs:label              "Uri resource serialization config"@en-US ;
+        dynapi:inputInterface        "org.apache.jena.rdf.model.Resource" ;
+        dynapi:className 		"org.apache.jena.rdf.model.Resource" ;
+        dynapi:methodName 		"toString";
+        dynapi:methodArguments	"";
+        dynapi:isStaticMethod	"false"^^xsd:boolean ;
+        .
+        
+dynapi-deserialization-config:uri-resource
+        a                       dynapi:ConversionConfiguration ;
+        rdfs:label              "Uri resource deserialization config"@en-US ;
+        dynapi:className        "org.apache.jena.rdf.model.impl.ResourceImpl" ;
+        dynapi:methodArguments  "input";
+        dynapi:isStaticMethod   "true"^^xsd:boolean ;
+        .
+
+dynapi-serialization-config:string-literal
+        a                       dynapi:ConversionConfiguration ;
+        rdfs:label              "String literal serialization config"@en-US ;
+        dynapi:inputInterface        "org.apache.jena.rdf.model.Literal" ;
+        dynapi:className 	"org.apache.jena.rdf.model.impl.LiteralImpl" ;
+        dynapi:methodName 	"toString";
+        dynapi:methodArguments	"";
+        dynapi:isStaticMethod	"false"^^xsd:boolean ;
+        .
+
+dynapi-deserialization-config:string-literal
+        a                       dynapi:ConversionConfiguration ;
+        rdfs:label              "String literal deserialization config"@en-US ;
+        dynapi:className 	"org.apache.jena.rdf.model.ResourceFactory" ;
+        dynapi:methodName 	"createStringLiteral";
+        dynapi:methodArguments	"input";
+        dynapi:isStaticMethod	"true"^^xsd:boolean ;
+        .
+
+dynapi-deserialization-config:generated-uri-resource
+        a                       dynapi:ConversionConfiguration ;
+        rdfs:label              "Uri resource deserialization config"@en-US ;
+        dynapi:className        "edu.cornell.mannlib.vitro.webapp.dynapi.data.implementation.ResourceGenerator" ;
+        dynapi:methodName       "generateResourceFromFormat";
+        dynapi:methodArguments	"input";
+        dynapi:isStaticMethod	"true"^^xsd:boolean ;
+        .
+
+dynapi-deserialization-config:internal-model
+        a                       dynapi:ConversionConfiguration ;
+        rdfs:label              "Jena internal model deserialization config"@en-US ;
+        dynapi:className 	"edu.cornell.mannlib.vitro.webapp.dynapi.data.implementation.DynapiModelFactory" ;
+        dynapi:methodName 	"getModel";
+        dynapi:methodArguments	"input";
+        dynapi:isStaticMethod	"true"^^xsd:boolean ;
+        .
+
+dynapi-serialization-config:internal-model
+        a                       dynapi:ConversionConfiguration ;
+        rdfs:label              "Jena internal model serialization config"@en-US ;
+        dynapi:inputInterface        "org.apache.jena.rdf.model.Model" ;
+        dynapi:className 		"edu.cornell.mannlib.vitro.webapp.dynapi.data.implementation.DynapiInMemoryOntModel" ;
+        dynapi:methodName 		"serializeN3";
+        dynapi:methodArguments	"input";
+        dynapi:isStaticMethod	"true"^^xsd:boolean ;
+        .
+
+dynapi-deserialization-config:model
+        a                       dynapi:ConversionConfiguration ;
+        rdfs:label              "Jena model deserialization config"@en-US ;
+        dynapi:className 		"edu.cornell.mannlib.vitro.webapp.dynapi.data.implementation.DynapiInMemoryOntModel" ;
+        dynapi:methodName 		"deserializeN3";
+        dynapi:methodArguments	"input";
+        dynapi:isStaticMethod	"true"^^xsd:boolean ;
+        .
+
+dynapi-serialization-config:model
+        a                       dynapi:ConversionConfiguration ;
+        rdfs:label              "Jena model serialization config"@en-US ;
+        dynapi:inputInterface   "org.apache.jena.rdf.model.Model" ;
+        dynapi:className 		"edu.cornell.mannlib.vitro.webapp.dynapi.data.implementation.DynapiInMemoryOntModel" ;
+        dynapi:methodName	 	"serializeN3";
+        dynapi:methodArguments	"input";
+        dynapi:isStaticMethod	"true"^^xsd:boolean ;
+        .
+
+dynapi-deserialization-config:json-container
+        a                       dynapi:ConversionConfiguration ;
+        rdfs:label              "Json object deserialization config"@en-US ;
+        dynapi:className 		"edu.cornell.mannlib.vitro.webapp.dynapi.data.implementation.JsonFactory" ;
+        dynapi:methodName 		"deserialize";
+        dynapi:methodArguments	"input";
+        dynapi:isStaticMethod	"true"^^xsd:boolean ;
+        .
+
+dynapi-serialization-config:json-container
+        a                       dynapi:ConversionConfiguration ;
+        rdfs:label              "Json object serialization config"@en-US ;
+        dynapi:inputInterface   "edu.cornell.mannlib.vitro.webapp.dynapi.data.implementation.JsonContainer" ;
+        dynapi:className 		"edu.cornell.mannlib.vitro.webapp.dynapi.data.implementation.JsonFactory" ;
+        dynapi:methodName 		"serialize";
+        dynapi:methodArguments	"input";
+        dynapi:isStaticMethod	"true"^^xsd:boolean ;
+        .
+
+dynapi-deserialization-config:array
+        a                       dynapi:ConversionConfiguration ;
+        rdfs:label              "Array list deserialization config"@en-US ;
+        dynapi:className 		"edu.cornell.mannlib.vitro.webapp.dynapi.data.implementation.ArrayListFactory" ;
+        dynapi:methodName 		"deserialize";
+        dynapi:methodArguments	"input";
+        dynapi:isStaticMethod	"true"^^xsd:boolean ;
+        .
+
+dynapi-serialization-config:array
+        a                       dynapi:ConversionConfiguration ;
+        rdfs:label              "Array list serialization config"@en-US ;
+        dynapi:inputInterface   "java.util.ArrayList" ;
+        dynapi:className 		"edu.cornell.mannlib.vitro.webapp.dynapi.data.implementation.ArrayListFactory" ;
+        dynapi:methodName 		"serialize";
+        dynapi:methodArguments	"input";
+        dynapi:isStaticMethod	"true"^^xsd:boolean ;
+        .
+
+dynapi-deserialization-config:big-integer
+        a                       dynapi:ConversionConfiguration ;
+        rdfs:label              "Big integer deserialization config"@en-US ;
+        dynapi:className 		"java.math.BigInteger" ;
+        dynapi:methodArguments	"input";
+        dynapi:isStaticMethod	"true"^^xsd:boolean ;
+        .
+
+dynapi-serialization-config:big-integer
+        a                       dynapi:ConversionConfiguration ;
+        rdfs:label              "Big integer serialization config"@en-US ;
+        dynapi:inputInterface   "java.math.BigInteger" ;
+        dynapi:className 		"java.math.BigInteger" ;
+        dynapi:methodName 		"toString";
+        dynapi:methodArguments	"";
+        dynapi:isStaticMethod	"false"^^xsd:boolean ;
+        .
+
+dynapi-deserialization-config:string
+        a                       dynapi:ConversionConfiguration ;
+        rdfs:label              "String deserialization config"@en-US ;
+        dynapi:className 		"java.lang.String" ;
+        dynapi:methodName 		"toString";
+        dynapi:methodArguments	"";
+        dynapi:isStaticMethod	"false"^^xsd:boolean ;
+        .
+
+dynapi-serialization-config:string
+        a                       dynapi:ConversionConfiguration ;
+        rdfs:label              "String serialization config"@en-US ;
+        dynapi:inputInterface   "java.lang.String" ;
+        dynapi:className 		"java.lang.String" ;
+        dynapi:methodName 		"toString";
+        dynapi:methodArguments	"";
+        dynapi:isStaticMethod	"false"^^xsd:boolean ;
+        .
+
+dynapi-deserialization-config:integer
+        a                       dynapi:ConversionConfiguration ;
+        rdfs:label              "Integer deserialization config"@en-US ;
+        dynapi:className 		"java.lang.Integer" ;
+        dynapi:methodName 		"parseInt";
+        dynapi:methodArguments	"input";
+        dynapi:isStaticMethod	"true"^^xsd:boolean ;
+        .
+
+dynapi-serialization-config:integer
+        a                       dynapi:ConversionConfiguration ;
+        rdfs:label              "Integer serialization config"@en-US ;
+        dynapi:inputInterface   "java.lang.Integer" ;
+        dynapi:className 		"java.lang.Integer" ;
+        dynapi:methodName 		"toString";
+        dynapi:methodArguments	"";
+        dynapi:isStaticMethod	"false"^^xsd:boolean ;
+        .
+
+dynapi-deserialization-config:boolean
+        a                       dynapi:ConversionConfiguration ;
+        rdfs:label              "Boolean deserialization config"@en-US ;
+        dynapi:className 		"java.lang.Boolean" ;
+        dynapi:methodName 		"parseBoolean";
+        dynapi:methodArguments	"input";
+        dynapi:isStaticMethod	"true"^^xsd:boolean ;
+        .
+
+dynapi-serialization-config:boolean
+        a                       dynapi:ConversionConfiguration ;
+        rdfs:label              "Boolean serialization config"@en-US ;
+        dynapi:inputInterface   "java.lang.Boolean" ;
+        dynapi:className 		"java.lang.Boolean" ;
+        dynapi:methodName 		"toString";
+        dynapi:methodArguments	"";
+        dynapi:isStaticMethod	"false"^^xsd:boolean ;
+        .
+        
+#-------------------------------------------------------------------------------
+#
+# Parameter serialization types
+#
+dynapi-serialization-type:TestResultArrayType
+        a                                   dynapi:SerializationType ,
+                                            dynapi:ArraySerializationType ;
+        rdfs:label                          "Test result array type"@en-US ;
+        dynapi:name                         "test result array type" ;
+        dynapi:hasElementsOfType            dynapi-serialization-type:TestResultActionType .
+
+dynapi-serialization-type:TestResultActionType
+        a                                   dynapi:SerializationType ,
+                                            dynapi:JsonContainerSerializationType ;
+        rdfs:label                          "Test result action object type"@en-US ;
+        dynapi:name                         "test result action object type" ;
+        dynapi:hasInternalElement           <https://vivoweb.org/ontology/vitro-dynamic-api/parameter/TestResultAction> ,
+                                            <https://vivoweb.org/ontology/vitro-dynamic-api/parameter/TestResultLabel> .
+
+dynapi-serialization-type:boolean
+        a                       dynapi:SerializationType ,
+                                dynapi:PrimitiveSerializationType ;
+        dynapi:name             "boolean" ;
+        rdfs:label              "Boolean type"@en-US ;
+        .
+
+dynapi-serialization-type:decimal
+        a                       dynapi:SerializationType ,
+                                dynapi:PrimitiveSerializationType ;
+        dynapi:name             "decimal" ;
+        rdfs:label              "Decimal type"@en-US ;
+        .
+
+dynapi-serialization-type:integer
+        a                       dynapi:SerializationType ,
+                                dynapi:PrimitiveSerializationType ;
+        dynapi:name             "integer" ;
+        rdfs:label              "Integer type"@en-US ;
+        .
+
+
+dynapi-serialization-type:json-container
+        a                       dynapi:SerializationType ,
+                                dynapi:JsonContainerSerializationType ;
+        dynapi:name             "json container" ;
+        rdfs:label              "Json container type"@en-US ;
+        .
+
+dynapi-serialization-type:array
+        a                       dynapi:SerializationType ,
+                                dynapi:ArraySerializationType ;
+        dynapi:name             "array" ;
+        rdfs:label              "Array type"@en-US ;
+        .
+
+dynapi-serialization-type:string
+        a                       dynapi:SerializationType ,
+                                dynapi:PrimitiveSerializationType ;
+        dynapi:name             "string" ;
+        rdfs:label              "String type"@en-US ;
+        .
+

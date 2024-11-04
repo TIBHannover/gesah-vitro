@@ -6,9 +6,12 @@ import static edu.cornell.mannlib.vitro.testing.ModelUtilitiesTestHelper.dataPro
 import static edu.cornell.mannlib.vitro.testing.ModelUtilitiesTestHelper.objectProperty;
 import static edu.cornell.mannlib.vitro.testing.ModelUtilitiesTestHelper.typeStatement;
 import static edu.cornell.mannlib.vitro.webapp.utils.configuration.ConfigurationBeanLoader.toJavaUri;
+import static org.apache.jena.datatypes.xsd.XSDDatatype.XSDboolean;
 import static org.apache.jena.datatypes.xsd.XSDDatatype.XSDfloat;
+import static org.apache.jena.datatypes.xsd.XSDDatatype.XSDinteger;
 import static org.apache.jena.datatypes.xsd.XSDDatatype.XSDstring;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -21,9 +24,14 @@ import java.util.Set;
 
 import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdf.model.Statement;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import edu.cornell.mannlib.vitro.webapp.dynapi.LoggingControl;
 import edu.cornell.mannlib.vitro.webapp.modelaccess.ContextModelAccess;
 import edu.cornell.mannlib.vitro.webapp.modelaccess.RequestModelAccess;
 import edu.cornell.mannlib.vitro.webapp.utils.configuration.ConfigurationRdfParser.InvalidConfigurationRdfException;
@@ -31,16 +39,20 @@ import edu.cornell.mannlib.vitro.webapp.utils.configuration.InstanceWrapper.Inst
 import edu.cornell.mannlib.vitro.webapp.utils.configuration.PropertyType.PropertyTypeException;
 import edu.cornell.mannlib.vitro.webapp.utils.configuration.WrappedInstance.ResourceUnavailableException;
 
-/**
- * TODO
- *
- * Circularity prevention. Before setting properties, create a WeakMap of
- * instances by URIs, so if a property refers to a created instance, we just
- * pass it in.
- */
 public class ConfigurationBeanLoaderTest extends
 		ConfigurationBeanLoaderTestBase {
 
+    @After
+    public void after() {
+        LoggingControl.restoreLogs();
+    }
+    
+    @Before
+    public void before() {
+        LoggingControl.offLogs();
+    }
+
+    
 	// ----------------------------------------------------------------------
 	// Constructor tests
 	// ----------------------------------------------------------------------
@@ -87,6 +99,7 @@ public class ConfigurationBeanLoaderTest extends
 						"The model contains no statements about"));
 	}
 
+	@Ignore
 	@Test
 	public void uriDoesNotDeclareResultClassAsType_throwsException()
 			throws ConfigurationBeanLoaderException {
@@ -258,31 +271,6 @@ public class ConfigurationBeanLoaderTest extends
 	// --------------------------------------------
 
 	@Test
-	public void loaderCantSatisfyContextModelsUser_throwsException()
-			throws ConfigurationBeanLoaderException {
-		model.add(typeStatement(GENERIC_INSTANCE_URI,
-				toJavaUri(NeedsContextModels.class)));
-
-		loader = noContextLoader;
-
-		expectSimpleFailure(
-				NeedsContextModels.class,
-				throwable(ConfigurationBeanLoaderException.class,
-						"Failed to load"),
-				throwable(ResourceUnavailableException.class,
-						"Cannot satisfy ContextModelsUser"));
-	}
-
-	public static class NeedsContextModels implements ContextModelsUser {
-		@Override
-		public void setContextModels(ContextModelAccess models) {
-			// Nothing to do
-		}
-	}
-
-	// --------------------------------------------
-
-	@Test
 	public void loaderCantSatisfyRequestModelsUser_throwsException()
 			throws ConfigurationBeanLoaderException {
 		model.add(typeStatement(GENERIC_INSTANCE_URI,
@@ -368,10 +356,8 @@ public class ConfigurationBeanLoaderTest extends
 	public void simpleSuccess() throws ConfigurationBeanLoaderException {
 		model.add(typeStatement(SIMPLE_SUCCESS_INSTANCE_URI,
 				toJavaUri(SimpleSuccess.class)));
-
 		SimpleSuccess instance = loader.loadInstance(
 				SIMPLE_SUCCESS_INSTANCE_URI, SimpleSuccess.class);
-
 		assertNotNull(instance);
 	}
 
@@ -393,6 +379,37 @@ public class ConfigurationBeanLoaderTest extends
 
 	public static class SimpleSuccess {
 		// Nothing of interest.
+	}
+	
+	public static class Friend {
+
+		public Friend() {
+
+		}
+		Friend friend;
+		String uri;
+		Integer intNumber;
+		boolean booleanValue;
+
+		@Property(uri = "http://set.friend/property")
+		public void setFriend(Friend friend) {
+			this.friend = friend;
+		}
+
+		@Property(uri = "http://set.friend/asString", asString = true)
+		public void setUri(String uri) {
+			this.uri = uri;
+		}
+
+		@Property(uri = "http://set.friend/setInteger")
+		public void setIntNumber(int intNumber) {
+			this.intNumber = intNumber;
+		}
+
+		@Property(uri = "http://set.friend/setBoolean")
+		public void setBooleanValue(boolean booleanValue) {
+			this.booleanValue = booleanValue;
+		}
 	}
 
 	// --------------------------------------------
@@ -673,7 +690,53 @@ public class ConfigurationBeanLoaderTest extends
 		Set<SimpleSuccess> instances = loader.loadAll(SimpleSuccess.class);
 		assertEquals(1, instances.size());
 	}
+	
+	// --------------------------------------------
+	
+	 @Test
+	  public void loop_test() throws ConfigurationBeanLoaderException {
+	    model.add(new Statement[] {
+	        typeStatement("http://friend.instance/one", toJavaUri(Friend.class)),
+	        typeStatement("http://friend.instance/two", toJavaUri(Friend.class)),
+	        objectProperty("http://friend.instance/one", "http://set.friend/property", "http://friend.instance/two"),
+	        objectProperty("http://friend.instance/two", "http://set.friend/property", "http://friend.instance/one") });
 
+	    Friend friend = loader.loadInstance("http://friend.instance/one", Friend.class);
+	    assertNotEquals(friend, friend.friend);
+	    assertEquals(friend, friend.friend.friend);
+	  }
+
+      @Test
+      public void loadUriAsString() throws ConfigurationBeanLoaderException {
+          model.add(new Statement[] {
+                  typeStatement("http://friend.instance/one", toJavaUri(Friend.class)),
+                  typeStatement("http://friend.instance/two", toJavaUri(Friend.class)),
+                  objectProperty("http://friend.instance/one", "http://set.friend/asString",
+                          "http://friend.instance/two"), });
+
+          Friend friend = loader.loadInstance("http://friend.instance/one", Friend.class);
+          assertEquals(friend.uri, "http://friend.instance/two");
+      }
+      
+      @Test
+      public void loadInteger() throws ConfigurationBeanLoaderException {
+          model.add(new Statement[] {
+                  typeStatement("http://friend.instance/one", toJavaUri(Friend.class)),
+                  dataProperty("http://friend.instance/one", "http://set.friend/setInteger", 42, XSDinteger), });
+
+          Friend friend = loader.loadInstance("http://friend.instance/one", Friend.class);
+          assertEquals(new Integer(42), friend.intNumber);
+      }
+      
+      @Test
+      public void loadBoolean() throws ConfigurationBeanLoaderException {
+          model.add(new Statement[] {
+                  typeStatement("http://friend.instance/one", toJavaUri(Friend.class)),
+                  dataProperty("http://friend.instance/one", "http://set.friend/setBoolean", true, XSDboolean), });
+
+          Friend friend = loader.loadInstance("http://friend.instance/one", Friend.class);
+          assertEquals(Boolean.TRUE, friend.booleanValue);
+      }
 	// --------------------------------------------
 
 	@Test

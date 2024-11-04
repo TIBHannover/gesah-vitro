@@ -1,0 +1,122 @@
+# $This file is distributed under the terms of the license in LICENSE$
+
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix vitro: <http://vitro.mannlib.cornell.edu/ns/vitro/0.7#> .
+@prefix dynapi: <https://vivoweb.org/ontology/vitro-dynamic-api#> .
+@prefix default-format: <https://vivoweb.org/ontology/vitro-dynamic-api/default-format/> .
+@prefix dynapi-serialization-config: <https://vivoweb.org/ontology/vitro-dynamic-api/parameter/serialization-config/> .
+@prefix dynapi-deserialization-config: <https://vivoweb.org/ontology/vitro-dynamic-api/parameter/deserialization-config/> .
+
+default-format:string
+        a                       dynapi:DefaultFormat ;
+        dynapi:serializationConfig dynapi-serialization-config:string ;
+        dynapi:deserializationConfig dynapi-deserialization-config:string ;
+        rdfs:label              "String"@en-US ;
+        dynapi:defaultValue		"";
+        .
+
+default-format:uri-resource
+        a                       dynapi:DefaultFormat ;
+        dynapi:serializationConfig dynapi-serialization-config:uri-resource ;
+        dynapi:deserializationConfig dynapi-deserialization-config:uri-resource ;
+        rdfs:label              "Resource implementation type"@en-US ;
+        dynapi:defaultValue		"";
+        .
+
+default-format:generated-uri-resource
+        a                       dynapi:DefaultFormat ;
+        dynapi:serializationConfig dynapi-serialization-config:uri-resource ;
+        dynapi:deserializationConfig dynapi-deserialization-config:generated-uri-resource ;
+        rdfs:label              "Resource implementation type"@en-US ;
+        dynapi:defaultValue		"";
+        .
+
+default-format:string-literal
+        a                       dynapi:DefaultFormat ;
+        dynapi:serializationConfig dynapi-serialization-config:string-literal ;
+        dynapi:deserializationConfig dynapi-deserialization-config:string-literal ;
+        rdfs:label              "String literal implementation type"@en-US ;
+        dynapi:defaultValue	    "";
+        .
+
+default-format:integer
+        a                       dynapi:DefaultFormat ;
+        dynapi:serializationConfig dynapi-serialization-config:integer ;
+        dynapi:deserializationConfig dynapi-deserialization-config:integer ;
+        rdfs:label              "Integer"@en-US ;
+        dynapi:defaultValue		"0";
+        .
+
+default-format:boolean
+        a                       dynapi:DefaultFormat ;
+        dynapi:serializationConfig dynapi-serialization-config:boolean ;
+        dynapi:deserializationConfig dynapi-deserialization-config:boolean ;
+        rdfs:label              "Boolean"@en-US ;
+        dynapi:defaultValue		"false";
+        .
+
+default-format:big-integer
+        a                       dynapi:DefaultFormat ;
+        dynapi:serializationConfig dynapi-serialization-config:big-integer ;
+        dynapi:deserializationConfig dynapi-deserialization-config:big-integer ;
+        rdfs:label              "BigInteger"@en-US ;
+        dynapi:defaultValue		"0";
+        .
+
+default-format:array
+        a                       dynapi:DefaultFormat ;
+        dynapi:serializationConfig dynapi-serialization-config:array ;
+        dynapi:deserializationConfig dynapi-deserialization-config:array ;
+        rdfs:label              "Array list"@en-US ;
+        dynapi:defaultValue		"[]";
+        .
+
+default-format:model
+        a                       dynapi:DefaultFormat ;
+        dynapi:serializationConfig dynapi-serialization-config:model ;
+        dynapi:deserializationConfig dynapi-deserialization-config:model ;
+        rdfs:label              "Jena model"@en-US ;
+        dynapi:defaultValue		"";
+        .
+
+default-format:internal-model
+        a                       dynapi:DefaultFormat ;
+        dynapi:serializationConfig dynapi-serialization-config:internal-model ;
+        dynapi:deserializationConfig dynapi-deserialization-config:internal-model ;
+        rdfs:label              "Jena internal model"@en-US ;
+        .
+
+default-format:json-container
+        a                       dynapi:DefaultFormat ;
+        dynapi:serializationConfig dynapi-serialization-config:json-container ;
+        dynapi:deserializationConfig dynapi-deserialization-config:json-container ;
+        rdfs:label              "Json container implementation type"@en-US ;
+        dynapi:defaultValue		"{}";
+        .
+
+default-format:json-container-array
+        a                       dynapi:DefaultFormat ;
+        dynapi:serializationConfig dynapi-serialization-config:json-container ;
+        dynapi:deserializationConfig dynapi-deserialization-config:json-container ;
+        rdfs:label              "Json container array"@en-US ;
+        dynapi:defaultValue		"[]";
+        .
+
+default-format:json-node
+        a                       dynapi:DefaultFormat ;
+        dynapi:serializationConfig dynapi-serialization-config:json-node ;
+        dynapi:deserializationConfig dynapi-deserialization-config:json-node ;
+        rdfs:label              "Json container array"@en-US ;
+        dynapi:defaultValue		"{}";
+        .
+
+default-format:byte-array-base-64
+        a                       dynapi:DefaultFormat ;
+        dynapi:serializationConfig dynapi-serialization-config:byte-array-base-64 ;
+        dynapi:deserializationConfig dynapi-deserialization-config:byte-array-base-64 ;
+        rdfs:label              "Byte array implementation type"@en-US ;
+        dynapi:defaultValue		"";
+        .
