@@ -130,6 +130,10 @@ public class ProcessRdfForm {
         List<String> requiredN3 = configuration.getN3Required();
         List<String> optionalN3 = configuration.getN3Optional();
 
+        if (isCustomizedOptional(configuration)) {
+            optionalN3 = configuration.getN3OptionalAssertions();
+        }
+
         /* substitute in the form values and existing values */
         subInValuesToN3( configuration, submission, requiredN3, optionalN3, null , null, vreq);
 
@@ -172,8 +176,12 @@ public class ProcessRdfForm {
         List<String> N3RequiredAssert = editConfig.getN3Required();
         List<String> N3OptionalAssert = editConfig.getN3Optional();
         List<String> N3RequiredRetract = editConfig.getN3Required();
-        List<String> N3OptionalRetract = editConfig.getN3OptionalRetracts();
-
+        List<String> N3OptionalRetract = editConfig.getN3Optional();
+        
+        if (isCustomizedOptional(editConfig)) {
+            N3OptionalAssert = editConfig.getN3OptionalAssertions();
+            N3OptionalRetract = editConfig.getN3OptionalRetractions();
+        }
         subInValuesToN3(editConfig, submission,
                 N3RequiredAssert, N3OptionalAssert,
                 N3RequiredRetract, N3OptionalRetract, vreq);
@@ -182,6 +190,13 @@ public class ProcessRdfForm {
                 N3RequiredAssert,N3OptionalAssert,
                 N3RequiredRetract, N3OptionalRetract, vreq, editConfig);
     }
+
+    private boolean isCustomizedOptional(EditConfigurationVTwo editConfig){
+        return
+            editConfig.getN3Optional().isEmpty() && (
+            !editConfig.getN3OptionalAssertions().isEmpty() || 
+            !editConfig.getN3OptionalRetractions().isEmpty() );
+        }
 
     @SuppressWarnings("unchecked")
     protected void subInValuesToN3(
@@ -199,11 +214,16 @@ public class ProcessRdfForm {
 
         //At this point deprecated optional retracts n3 are the same as optional asserts n3
         List<String> deprecatedRetracts = new ArrayList<String>();
-        if (optionalAsserts != null && optionalRetracts != null) {
-          deprecatedRetracts.addAll(optionalAsserts);
-        }
         /* ********** Form submission URIs ********* */
-        substituteInMultiURIs(submission.getUrisFromForm(), requiredAsserts, optionalAsserts, optionalRetracts, URLToReturnTo);
+        if (isCustomizedOptional(editConfig)) {
+            if (optionalAsserts != null) {
+                deprecatedRetracts.addAll(optionalAsserts);
+            }
+            substituteInMultiURIs(submission.getUrisFromForm(), requiredAsserts, optionalAsserts, optionalRetracts, URLToReturnTo);
+        } else {
+            substituteInMultiURIs(submission.getUrisFromForm(), requiredAsserts, optionalAsserts, URLToReturnTo);
+        }
+        
         logSubstitue( "Added form URIs", requiredAsserts, optionalAsserts, requiredRetracts, optionalRetracts);
         //Retractions does NOT get values from form.
 
@@ -242,12 +262,16 @@ public class ProcessRdfForm {
 			literalsFromForm.replace(aKey, newLiteralFromForm);
 		}
 
-        substituteInMultiLiterals( literalsFromForm, requiredAsserts, optionalAsserts, optionalRetracts, URLToReturnTo);
-        logSubstitue( "Added form Literals", requiredAsserts, optionalAsserts, requiredRetracts, optionalRetracts);
-        //Retractions does NOT get values from form.
-        if (optionalAsserts != null && optionalRetracts != null) {
-        	optionalRetracts.addAll(deprecatedRetracts);
+        if (isCustomizedOptional(editConfig)) {
+            substituteInMultiLiterals( literalsFromForm, requiredAsserts, optionalAsserts, optionalRetracts, URLToReturnTo);
+            //Retractions does NOT get values from form.
+            if (optionalRetracts != null) {
+                optionalRetracts.addAll(deprecatedRetracts);
+            }
+        } else {
+            substituteInMultiLiterals( literalsFromForm, requiredAsserts, optionalAsserts, URLToReturnTo);
         }
+        logSubstitue( "Added form Literals", requiredAsserts, optionalAsserts, requiredRetracts, optionalRetracts);
 
         /* *********** Add subject, object and predicate ******** */
         substituteInSubPredObjURIs(editConfig, requiredAsserts, optionalAsserts, requiredRetracts, optionalRetracts, URLToReturnTo);
