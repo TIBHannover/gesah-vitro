@@ -19,7 +19,7 @@
                             <#list additionalFilters as filterId>
                                 <#if filterGenericInfo.filters[filterId]?? >
                                     <#assign filter = filterGenericInfo.filters[filterId] >
-                                    <#if ( user.loggedIn || filter.public ) && (!filter.hidden || !f.facetsRequired ) >
+                                    <#if ( user.loggedIn || filter.public ) && !filter.hidden >
                                         <li class="filter-tab">
                                             <a href="#" <#if filter.selected || (filters[filterId]?? && filters[filterId].selected)> class="selected" </#if> >${filter.name?html}</a>
                                             <#if filter.type == "RangeFilter">
