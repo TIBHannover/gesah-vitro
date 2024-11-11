@@ -50,11 +50,11 @@
 #browse-filters {
 	width: 25%;
 	float: left;
-	background-color: #E3E3E3;
+	background-color: #f1f2ee;
 }
 
 #browse-filters>li:not(:last-child) {
-	border-bottom: 1px dotted #2B3C46;
+	border-bottom: 1px dotted #dde4e3;
 }
 
 #browse-filters>li {
@@ -93,7 +93,7 @@
 }
 
 .facet-values > li > a > label:hover {
-	color: #23527c;
+	color: #2ea0cf;
 }
 
 .range-filter {
