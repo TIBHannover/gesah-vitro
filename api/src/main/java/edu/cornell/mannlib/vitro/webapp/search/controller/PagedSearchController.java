@@ -486,6 +486,7 @@ public class PagedSearchController extends FreemarkerHttpServlet {
 
         addDefaultVitroFacets(vreq, query);
 
+        query.setFacetLimit(10000);
         SearchFiltering.addFacetFieldsToQuery(filters, query);
 
         SearchFiltering.addFiltersToQuery(query, filters);
