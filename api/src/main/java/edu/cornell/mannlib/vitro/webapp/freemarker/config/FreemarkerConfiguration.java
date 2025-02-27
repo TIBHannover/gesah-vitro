@@ -248,6 +248,7 @@ public abstract class FreemarkerConfiguration {
 		private void setSharedVariables(FreemarkerConfigurationImpl c,
 				ServletContext ctx) throws TemplateModelException {
 			c.setSharedVariable("version", getRevisionInfo(ctx));
+			c.setSharedVariable("statics", BeansWrapper.getDefaultInstance().getStaticModels());
 
 			/*
 			 * Put in edit configuration constants - useful for freemarker
