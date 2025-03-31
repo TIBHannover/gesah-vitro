@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -186,12 +187,12 @@ public class PagedSearchController extends FreemarkerHttpServlet {
                 log.debug(getSpentTime(startTime) + "ms spent before read filter configurations.");
             }
             Set<String> currentRoles = SearchFiltering.getCurrentUserRoles(vreq);
-            Map<String, SearchFilter> filterConfigurationsByField = SearchFiltering.readFilterConfigurations(currentRoles, vreq);
+            Map<String, SearchFilter> filters = SearchFiltering.readFilterConfigurations(currentRoles, vreq);
             if (log.isDebugEnabled()) {
                 log.debug(getSpentTime(startTime) + "ms spent before get sort configurations.");
             }
 
-            SearchFiltering.setSelectedFilters(filterConfigurationsByField, requestFilters);
+            SearchFiltering.setSelectedFilters(filters, requestFilters);
             if (log.isDebugEnabled()) {
                 log.debug(getSpentTime(startTime) + "ms spent after setSelectedFilters.");
             }
@@ -201,7 +202,7 @@ public class PagedSearchController extends FreemarkerHttpServlet {
                 log.debug(getSpentTime(startTime) + "ms spent before get query configurations.");
             }
             SearchQuery query =
-                    getQuery(queryText, documentsToReturn, startIndex, vreq, filterConfigurationsByField, sortConfigurations);
+                    getQuery(queryText, documentsToReturn, startIndex, vreq, filters, sortConfigurations);
             if (log.isDebugEnabled()) {
                 log.debug(getSpentTime(startTime) + "ms spent after get query configurations.");
             }
@@ -223,11 +224,11 @@ public class PagedSearchController extends FreemarkerHttpServlet {
                 log.error("Search response was null");
                 return doFailedSearch(I18n.text(vreq, "error_in_search_request"), queryText, format, vreq);
             }
-            addFacetCountersFromRequest(response, filterConfigurationsByField, vreq);
+            addFacetCountersFromRequest(response, filters, vreq);
             if (log.isDebugEnabled()) {
                 log.debug(getSpentTime(startTime) + "ms spent after addFacetCountersFromRequest.");
             }
-            addFilterValueLabels(filterConfigurationsByField, vreq);
+            addFilterValueLabels(filters, vreq);
             SearchResultDocumentList docs = response.getResults();
             if (docs == null) {
                 log.error("Document list for a search was null");
@@ -274,18 +275,16 @@ public class PagedSearchController extends FreemarkerHttpServlet {
                 if (log.isDebugEnabled()) {
                     log.debug(getSpentTime(startTime) + "ms spent before sorting filterConfigurationsByField values.");
                 }
-                for (Entry<String, SearchFilter> entry : filterConfigurationsByField.entrySet()) {
+                for (Entry<String, SearchFilter> entry : filters.entrySet()) {
                     entry.getValue().sortValues();
                 }
                 if (log.isDebugEnabled()) {
                     log.debug(getSpentTime(startTime) + "ms spent after sorting filterConfigurationsByField values.");
                 }
-                Map<String, SearchFilter> filtersForTemplateById =
-                        SearchFiltering.getFiltersForTemplate(filterConfigurationsByField);
-                body.put("filters", filtersForTemplateById);
-                body.put("filterGroups", SearchFiltering.readFilterGroupsConfigurations(vreq, filtersForTemplateById));
+                body.put("filters", filters);
+                body.put("filterGroups", SearchFiltering.readFilterGroupsConfigurations(vreq, filters));
                 body.put("sortOptions", sortConfigurations);
-                body.put("emptySearch", isEmptySearchFilters(filterConfigurationsByField));
+                body.put("emptySearch", isEmptySearchFilters(filters));
             }
 
             body.put("individuals", IndividualSearchResult.getIndividualTemplateModels(individuals, vreq));
@@ -335,8 +334,8 @@ public class PagedSearchController extends FreemarkerHttpServlet {
         return isAuthorized;
     }
 
-    private static void addFilterValueLabels(Map<String, SearchFilter> filterConfigurationsByField, VitroRequest vreq) {
-        for (SearchFilter filter : filterConfigurationsByField.values()) {
+    private static void addFilterValueLabels(Map<String, SearchFilter> filters, VitroRequest vreq) {
+        for (SearchFilter filter : filters.values()) {
             if (filter.isLocalizationRequired()) {
                 for (FilterValue value : filter.getValues().values()) {
                     if (StringUtils.isBlank(value.getName()) && !value.getId().contains(" ")) {
@@ -363,10 +362,11 @@ public class PagedSearchController extends FreemarkerHttpServlet {
         return true;
     }
 
-    private static void addFacetCountersFromRequest(SearchResponse response, Map<String, SearchFilter> filtersByField,
+    private static void addFacetCountersFromRequest(SearchResponse response, Map<String, SearchFilter> filters,
             VitroRequest vreq) {
         long startTime = System.nanoTime();
-        List<SearchFacetField> resultfacetFields = response.getFacetFields();
+        Map<String, SearchFacetField> fields = response.getFacetFields().stream()
+                .collect(Collectors.toMap(SearchFacetField::getName, Function.identity()));
         if (log.isDebugEnabled()) {
             log.debug(getSpentTime(startTime) + "ms spent after getFacetFields.");
         }
@@ -374,9 +374,9 @@ public class PagedSearchController extends FreemarkerHttpServlet {
         if (log.isDebugEnabled()) {
             log.debug(getSpentTime(startTime) + "ms spent after SearchFiltering.getRequestFilters.");
         }
-        for (SearchFacetField resultField : resultfacetFields) {
-            SearchFilter searchFilter = filtersByField.get(resultField.getName());
-            if (searchFilter == null) {
+        for (SearchFilter searchFilter : filters.values()) {
+            SearchFacetField resultField = fields.get(searchFilter.getField());
+            if (resultField == null) {
                 continue;
             }
             List<Count> values = resultField.getValues();

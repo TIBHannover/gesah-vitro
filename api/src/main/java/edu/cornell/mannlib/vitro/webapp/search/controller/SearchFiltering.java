@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -174,7 +173,7 @@ public class SearchFiltering {
 
     protected static void addFiltersToQuery(SearchQuery query, Map<String, SearchFilter> filters) {
         for (SearchFilter searchFilter : filters.values()) {
-            if (PARAM_QUERY_TEXT.equals(searchFilter.getId())){
+            if (PARAM_QUERY_TEXT.equals(searchFilter.getId())) {
                 continue;
             }
             if (searchFilter.isInput()) {
@@ -243,7 +242,7 @@ public class SearchFiltering {
 
     public static Map<String, SearchFilter> readFilterConfigurations(Set<String> currentRoles, VitroRequest vreq) {
         long startTime = System.nanoTime();
-        Map<String, SearchFilter> filtersByField = new LinkedHashMap<>();
+        Map<String, SearchFilter> filters = new LinkedHashMap<>();
         Model model;
         if (vreq != null) {
             model = ModelAccess.on(vreq).getOntModelSelector().getDisplayModel();
@@ -251,7 +250,7 @@ public class SearchFiltering {
             model = ModelAccess.getInstance().getOntModelSelector().getDisplayModel();
         }
         if (model == null) {
-            return filtersByField;
+            return filters;
         }
         model.enterCriticalSection(Lock.READ);
         try {
@@ -265,15 +264,15 @@ public class SearchFiltering {
                     solution.get("filter_type") == null) {
                     continue;
                 }
-                String resultFilterId = solution.get("filter_id").toString();
+                String filterId = solution.get("filter_id").toString();
                 String resultFieldName = solution.get("field_name").toString();
 
                 SearchFilter filter = null;
-                if (filtersByField.containsKey(resultFieldName)) {
-                    filter = filtersByField.get(resultFieldName);
+                if (filters.containsKey(filterId)) {
+                    filter = filters.get(filterId);
                 } else {
                     Optional<Locale> locale = vreq != null ? Optional.of(vreq.getLocale()) : Optional.empty();
-                    filter = createSearchFilter(filtersByField, solution, resultFilterId, resultFieldName, locale);
+                    filter = createSearchFilter(filters, solution, filterId, resultFieldName, locale);
                 }
                 if (isDisplay(solution, vreq, "filterDisplayLimitRole", "public")) {
                     filter.setDisplayed(true);
@@ -309,7 +308,7 @@ public class SearchFiltering {
         if (log.isDebugEnabled()) {
             log.debug(getSpentTime(startTime) + "ms spent after FILTER QUERY request.");
         }
-        return sortFilters(filtersByField);
+        return sortFilters(filters);
     }
 
     private static boolean isDisplay(QuerySolution solution, VitroRequest vreq, String limitVarName,
@@ -347,8 +346,8 @@ public class SearchFiltering {
     }
 
     public static void addDefaultFilters(SearchQuery query, Set<String> currentRoles) {
-        Map<String, SearchFilter> filtersByField = SearchFiltering.readFilterConfigurations(currentRoles, null);
-        for (SearchFilter searchFilter : filtersByField.values()) {
+        Map<String, SearchFilter> filters = SearchFiltering.readFilterConfigurations(currentRoles, null);
+        for (SearchFilter searchFilter : filters.values()) {
             if (searchFilter.isInput()) {
                 SearchFiltering.addInputFilter(query, searchFilter);
             } else if (searchFilter.isRange()) {
@@ -470,11 +469,11 @@ public class SearchFiltering {
         return sortConfigurations;
     }
 
-    private static SearchFilter createSearchFilter(Map<String, SearchFilter> filtersByField,
-            QuerySolution solution, String resultFilterId, String resultFieldName, Optional<Locale> locale) {
+    private static SearchFilter createSearchFilter(Map<String, SearchFilter> filters,
+            QuerySolution solution, String filterId, String resultFieldName, Optional<Locale> locale) {
         SearchFilter filter;
-        filter = new SearchFilter(resultFilterId, locale);
-        filtersByField.put(resultFieldName, filter);
+        filter = new SearchFilter(filterId, locale);
+        filters.put(filterId, filter);
         filter.setName(solution.get("filter_label"));
         filter.setOrder(solution.get("filter_order"));
         filter.setType(solution.get("filter_type"));
@@ -642,21 +641,14 @@ public class SearchFiltering {
     }
 
     static void addFacetFieldsToQuery(Map<String, SearchFilter> filters, SearchQuery query) {
-        for (String fieldId : filters.keySet()) {
-            SearchFilter filter = filters.get(fieldId);
+        for (SearchFilter filter : filters.values()) {
             if (filter.isFacetsRequired()) {
-                query.addFacetFields(fieldId);
+                query.addFacetFields(filter.getField());
             }
         }
     }
 
     public static Map<String, SearchFilter> getFiltersById(Map<String, SearchFilter> filtersByField) {
-        Map<String, SearchFilter> filtersById =
-                filtersByField.values().stream().collect(Collectors.toMap(SearchFilter::getId, Function.identity()));
-        return filtersById;
-    }
-
-    static Map<String, SearchFilter> getFiltersForTemplate(Map<String, SearchFilter> filtersByField) {
         return filtersByField.values().stream().collect(Collectors.toMap(SearchFilter::getId, Function.identity()));
     }
 
