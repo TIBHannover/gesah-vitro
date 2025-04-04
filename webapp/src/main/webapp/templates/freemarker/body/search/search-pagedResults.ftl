@@ -30,6 +30,7 @@ ${headScripts.add('<script type="text/javascript" src="${urls.base}/js/wNumb.min
             </li>
         </#list>
     </ul>
+    <input form="search-form" type="hidden" name="lang" value="${locale!}">
 
     <@printPagingLinks />
     <br />
