@@ -96,6 +96,15 @@ dynapi-parameter-type:model
         dynapi:serializationType dynapi-serialization-type:string ;
         .
 
+dynapi-parameter-type:model-rdf-xml
+        a                       dynapi:ParameterType ;
+        rdfs:label              "Model type"@en-US ;
+        dynapi:hasFormat default-format:model-rdf-xml ;
+        dynapi:interface        "org.apache.jena.rdf.model.Model" ;
+        dynapi:serializationType dynapi-serialization-type:string ;
+        .
+
+
 dynapi-parameter-type:internal-model
         a                       dynapi:ParameterType ;
         rdfs:label              "Model type"@en-US ;

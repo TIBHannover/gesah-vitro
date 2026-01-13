@@ -82,6 +82,14 @@ default-format:model
         dynapi:defaultValue		"";
         .
 
+default-format:model-rdf-xml
+        a                       dynapi:DefaultFormat ;
+        dynapi:serializationConfig    dynapi-serialization-config:model-rdf-xml ;
+        dynapi:deserializationConfig  dynapi-deserialization-config:model ;
+        rdfs:label              "Jena RDF/XML model"@en-US ;
+        dynapi:defaultValue		"";
+        .
+
 default-format:internal-model
         a                       dynapi:DefaultFormat ;
         dynapi:serializationConfig dynapi-serialization-config:internal-model ;
